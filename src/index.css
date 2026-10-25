@@ -1,0 +1,237 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('./fonts/Galmuri11.woff2') format('woff2');
+  font-display: block;
+}
+@font-face {
+  font-family: 'Galmuri14';
+  src: url('./fonts/Galmuri14.woff2') format('woff2');
+  font-display: block;
+}
+@font-face {
+  font-family: 'GalmuriMono11';
+  src: url('./fonts/GalmuriMono11.woff2') format('woff2');
+  font-display: block;
+}
+
+/* Palette: black, white, gray, and one blue. */
+@theme {
+  --color-ink: #070708;
+  --color-coal: #111113;
+  --color-gray: #8a8d94;
+  --color-fog: #c6c8cc;
+  --color-paper: #f0efea;
+  --color-plate: #2340ff;
+  --font-pixel: 'Galmuri11', monospace;
+  --font-big: 'Galmuri14', monospace;
+  --font-mono: 'GalmuriMono11', monospace;
+}
+
+/* Screen-size scale for the app UI (not the exported card, which stays fixed).
+   --ui multiplies font sizes, --gutter is the side padding, --col the content width,
+   --card-zoom enlarges the live card on tablets and desktops. */
+:root {
+  --ui: 0.92;
+  --gutter: 12px;
+  --col: 360px;
+  --card-max: 360px;
+  --card-zoom: 1;
+}
+@media (min-width: 360px) {
+  :root { --ui: 1; --gutter: 16px; }
+}
+@media (min-width: 400px) {
+  :root { --ui: 1.05; --gutter: 20px; --col: 400px; --card-max: 400px; }
+}
+/* From here the card is zoomed, and the column matches the zoomed card. */
+@media (min-width: 600px) {
+  :root { --ui: 1.1; --gutter: 32px; --card-max: 360px; --card-zoom: 1.15; --col: calc(360px * var(--card-zoom)); }
+}
+@media (min-width: 768px) {
+  :root { --ui: 1.15; --gutter: 40px; --card-zoom: 1.25; }
+}
+@media (min-width: 1200px) {
+  :root { --ui: 1.2; --gutter: 48px; --card-zoom: 1.3; }
+}
+
+/* fs-13 = 13px at the base scale. */
+@utility fs-* {
+  font-size: calc(--value(integer) * 1px * var(--ui));
+}
+@utility gutter {
+  padding-inline: var(--gutter);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-pixel);
+  -webkit-font-smoothing: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Soft halation on headline text, like light bleeding on film. */
+.glow {
+  text-shadow:
+    0 0 6px rgb(240 239 234 / 0.45),
+    0 0 22px rgb(35 64 255 / 0.45);
+}
+
+/* Print grain over a single element. */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+/* Sub-pixel dot grid behind the observed figure. */
+.dotgrid {
+  background-image: radial-gradient(circle, rgb(240 239 234 / 0.1) 0.7px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+/* Live ASCII figures: halation that breathes. */
+@keyframes halation {
+  0%, 100% { filter: drop-shadow(0 0 2px rgb(240 239 234 / 0.7)) drop-shadow(0 0 10px rgb(35 64 255 / 0.55)); }
+  50% { filter: drop-shadow(0 0 3px rgb(240 239 234 / 0.9)) drop-shadow(0 0 16px rgb(35 64 255 / 0.8)); }
+}
+.trip {
+  animation: halation 4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0 }
+}
+.caret::after {
+  content: '█';
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes glitch-in {
+  0% { clip-path: inset(0 0 100% 0); transform: translateX(-12px); filter: brightness(3) blur(2px); }
+  20% { clip-path: inset(0 0 60% 0); transform: translateX(10px); }
+  40% { clip-path: inset(30% 0 20% 0); transform: translateX(-6px); filter: brightness(1.8); }
+  60% { clip-path: inset(0 0 10% 0); transform: translateX(4px); }
+  80% { clip-path: inset(0 0 0 0); transform: translateX(-2px); filter: none; }
+  100% { clip-path: inset(0 0 0 0); transform: none; }
+}
+.glitch-in {
+  animation: glitch-in 0.9s steps(8) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.fade-up {
+  animation: fade-up 0.9s ease-out both;
+}
+
+/* Background: a faint column of light from above, the "light" souls are told to follow. */
+.beam {
+  position: absolute;
+  left: 50%;
+  top: -10%;
+  width: 70vmin;
+  height: 120%;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgb(240 239 234 / 0.16), rgb(198 200 204 / 0.06) 55%, transparent 85%);
+  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  filter: blur(18px);
+  animation: breathe 7s ease-in-out infinite;
+}
+@keyframes breathe {
+  50% { opacity: 0.55; }
+}
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgb(0 0 0 / 0.75) 100%);
+}
+
+/* Heavy film grain that jitters. */
+.grain-layer {
+  position: absolute;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+  animation: jitter 0.5s steps(4) infinite;
+}
+@keyframes jitter {
+  0% { transform: translate(0, 0) }
+  25% { transform: translate(-3%, 2%) }
+  50% { transform: translate(2%, -3%) }
+  75% { transform: translate(-1%, -2%) }
+}
+
+/* Dust drifting up through the beam. */
+@keyframes rise {
+  from { transform: translateY(0); }
+  to { transform: translateY(-110vh); }
+}
+@keyframes twinkle {
+  50% { opacity: 0.1; }
+}
+
+/* White flash with halftone dots when a record is revealed. */
+.flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, rgb(7 7 8 / 0.8) 1.6px, transparent 2.2px) 0 0 / 7px 7px,
+    radial-gradient(circle at 50% 45%, #ffffff 0%, #d9dadd 14%, #8a8d94 30%, #2340ff 48%, #0b0f33 66%, #070708 84%);
+}
+.flash.on {
+  animation: burst 1.6s ease-out both;
+}
+@keyframes burst {
+  0% { opacity: 0; transform: scale(0.3); }
+  25% { opacity: 1; }
+  60% { opacity: 0.9; transform: scale(1.6); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+@keyframes throb {
+  from { opacity: 0.1; transform: scale(1); }
+  to { opacity: 0.32; transform: scale(1.12); }
+}
+.flash.dim {
+  animation: throb 1.8s ease-in-out infinite alternate;
+}
+
+/* Vertical scan line across the observed field. */
+@keyframes scan {
+  0%, 100% { opacity: 0.7; }
+  45% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.scanline {
+  animation: scan 2.4s steps(6) infinite;
+}
+
+/* Story progress bar fill. */
+@keyframes fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret::after, .glitch-in, .trip, .beam, .grain-layer, .scanline, .flash.dim, .fade-up { animation: none !important; }
+  .flash.on { animation-duration: 0.01s; }
+}
