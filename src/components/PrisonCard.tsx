@@ -48,7 +48,7 @@ function Stamp() {
 export function PrisonCard({ record, nickname, frozen, compact }: Props) {
   const { crime, species } = record
   return (
-    <article className="grain relative mx-auto w-full max-w-[var(--card-max,360px)] overflow-hidden bg-ink font-mono text-paper">
+    <article className="grain relative mx-auto w-full max-w-[var(--card-max,360px)] overflow-hidden border border-paper/25 bg-ink font-mono text-paper">
       <header className="bg-plate px-2.5 py-2 text-[10px] leading-[1.5]">
         {nickname && <Row k="NAME" v={`'${nickname}'`} c="이번 생의 이름" />}
         <Row k="ZODIAC" v={`'${species.origin.en}'`} c={species.origin.ko} />

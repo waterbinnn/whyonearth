@@ -1,7 +1,7 @@
-// /s/<token>?n=<name> (rewritten here by vercel.json): a tiny page whose title and preview
-// image show this person's record, so KakaoTalk and other link previews show their crime.
+// /s/<token>?n=<name> (rewritten here by vercel.json): a tiny page whose preview image shows
+// this person's record, so KakaoTalk and other link previews show their crime.
 // Visitors are sent straight on to the app at /?r=<token>.
-import { makeRecord } from '../src/lib/record'
+import { SITE_DESC, SITE_TITLE } from '../src/lib/copy'
 import { cleanNick, decodeBirth } from '../src/lib/token'
 
 export const config = { runtime: 'edge' }
@@ -15,7 +15,6 @@ export default function handler(req: Request): Response {
   if (!birth) return Response.redirect(new URL('/', url).href, 302)
 
   const nick = cleanNick(url.searchParams.get('n'))
-  const { species, crime, verdict } = makeRecord(birth)
   const q = new URLSearchParams({ r: token })
   if (nick) q.set('n', nick)
   const nq = nick ? `?${new URLSearchParams({ n: nick })}` : ''
@@ -23,8 +22,9 @@ export default function handler(req: Request): Response {
   const app = new URL(`/?${q}`, url).href
   const page = new URL(`/s/${token}${nq}`, url).href
   const image = new URL(`/api/og?${q}`, url).href
-  const title = `${nick ? `${nick}의` : '이 사람의'} 죄명: ${crime.ko}`
-  const desc = `${species.origin.ko} · ${species.ko}. ${verdict} 당신은 무슨 죄로 지구에 왔을까?`
+  // Same title and text as the main page; the preview image shows this person's result.
+  const title = SITE_TITLE
+  const desc = SITE_DESC
 
   const html = `<!doctype html>
 <html lang="ko">

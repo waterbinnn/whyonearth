@@ -5,7 +5,7 @@ import { App } from './App'
 import { Gallery } from './Gallery'
 
 const q = new URLSearchParams(location.search)
-const isGallery = ['gallery', 'card', 'report', 'story', 'sheet', 'og', 'icon', 'portrait'].some((k) => q.has(k))
+const isGallery = ['gallery', 'card', 'report', 'story', 'og', 'icon', 'portrait'].some((k) => q.has(k))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>{isGallery ? <Gallery /> : <App />}</StrictMode>,

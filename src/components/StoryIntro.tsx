@@ -97,7 +97,7 @@ export function StoryIntro({ onDone }: { onDone: () => void }) {
             <span className="text-plate">●</span> <Timecode />
           </span>
           <button className="-my-1 py-1 pl-4 text-paper/80" onClick={stop(onDone)}>
-            SKIP
+            닫기 ✕
           </button>
         </div>
       </div>
@@ -126,7 +126,7 @@ export function StoryIntro({ onDone }: { onDone: () => void }) {
           1947년 로스웰 외계인 추락 사건을 바탕으로 각색
         </span>
         <button className="shrink-0 py-2 pl-4 font-pixel fs-12 text-paper" onClick={stop(next)}>
-          {lastScene && lastBeat ? '내 기록 열람 →' : '다음 →'}
+          {lastScene && lastBeat ? '돌아가기 →' : '다음 →'}
         </button>
       </div>
     </section>

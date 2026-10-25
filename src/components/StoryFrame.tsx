@@ -1,7 +1,6 @@
-// Exported images. Both are fixed-size and pin --card-max, so they come out the same on
+// Exported image. It is fixed-size and pin --card-max, so it comes out the same on
 // every screen (the app's screen-size variables must not leak in).
 //   StoryFrame: 9:16 for Instagram stories, rendered off-screen at 360x640, saved at 3x.
-//   CardSheet: the card plus its incident report, 380 wide.
 import type { CSSProperties, Ref } from 'react'
 import type { PrisonRecord } from '../lib/record'
 import { PrisonCard } from './PrisonCard'
@@ -27,10 +26,14 @@ export function StoryFrame({ record, nickname, ref }: Props) {
   return (
     <div ref={ref} className="grain relative overflow-hidden bg-ink text-paper" style={pinned(360, 640)}>
       <StarDust count={90} />
-      <div className="beam" style={{ width: 300, animation: 'none' }} />
+      {/* soft glow from above instead of a hard-edged spotlight */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 70% 45% at 50% 0%, rgb(140 160 255 / 0.16), transparent 70%)' }}
+      />
       <div className="vignette" />
       <div className="relative flex h-full flex-col items-center px-[28px] pt-5 pb-3">
-        <div className="glow text-center font-big text-[20px] leading-tight">나는 왜 지구에 갇혔나</div>
+        <div className="glow text-center font-big text-[20px] leading-tight">지구 이전의 삶과 죄목</div>
         {/* zoom (not transform) so the smaller card also takes less layout space */}
         <div className="mt-2.5" style={{ width: 360, zoom: 304 / 360 }}>
           <PrisonCard record={record} nickname={nickname} frozen compact />
@@ -43,15 +46,6 @@ export function StoryFrame({ record, nickname, ref }: Props) {
           <div className="font-mono text-[9px] text-gray">{location.host}</div>
         </div>
       </div>
-    </div>
-  )
-}
-
-export function CardSheet({ record, nickname, ref }: Props) {
-  return (
-    <div ref={ref} className="flex flex-col gap-2 bg-ink p-[10px]" style={pinned(380)}>
-      <PrisonCard record={record} nickname={nickname} frozen />
-      <Incident record={record} size="md" />
     </div>
   )
 }

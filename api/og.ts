@@ -41,7 +41,6 @@ export default async function handler(req: Request): Promise<Response> {
       box(
         { flexDirection: 'column', background: C.plate, padding: '14px 18px', fontSize: 20, lineHeight: 1.5 },
         ...(nick ? [row('NAME', nick, '이번 생의 이름')] : []),
-        row('ZODIAC', species.origin.en, species.origin.ko),
         row('SPECIES', species.en, species.ko),
       ),
       box(

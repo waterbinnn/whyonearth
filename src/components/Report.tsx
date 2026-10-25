@@ -1,4 +1,4 @@
-// Long-form result under the card: record before Earth, symptoms on Earth (bad habits, then good points), and species matches.
+// Long-form result under the card: record before Earth, what your soul kept (bad habits, then good points), and species matches.
 import { SPECIES, type Match } from '../data/species'
 import type { PrisonRecord } from '../lib/record'
 import { AsciiPortrait } from './AsciiPortrait'
@@ -39,6 +39,8 @@ function Mate({ label, match, tone }: { label: string; match: Match; tone: 'good
 
 export function Report({ record }: { record: PrisonRecord }) {
   const { species, crime } = record
+  // One list: the bad habits first, then the good points.
+  const traits = [...record.symptoms, ...species.merits]
   return (
     <div className="w-full max-w-[var(--col)] space-y-8">
       <Section no="01" en="RECORD BEFORE EARTH" title={`지구 이전 기록: ${species.ko}`}>
@@ -51,15 +53,9 @@ export function Report({ record }: { record: PrisonRecord }) {
       </Section>
 
       <Section no="02" en="WHAT YOUR SOUL KEPT" title="영혼에 남은 당신">
-        <div className="font-pixel fs-14 text-paper">기억은 지워져도 나쁜 버릇은 그대로다.</div>
+        <div className="font-pixel fs-14 text-paper">기억은 지워져도 당신은 그대로다.</div>
         <div className="mt-3 space-y-4 border-l border-paper/15 pl-3">
-          {record.symptoms.map((t) => (
-            <P key={t}>{t}</P>
-          ))}
-        </div>
-        <div className="mt-8 font-pixel fs-14 text-paper">좋은 버릇도 같이 남았다.</div>
-        <div className="mt-3 space-y-4 border-l border-paper/15 pl-3">
-          {species.merits.map((t) => (
+          {traits.map((t) => (
             <P key={t}>{t}</P>
           ))}
         </div>

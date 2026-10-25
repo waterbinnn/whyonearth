@@ -29,12 +29,15 @@ export function readSharedRecord(): { birth: string; nickname: string } | null {
   return birth ? { birth, nickname: cleanNick(q.get('n')) } : null
 }
 
+// The test itself (main page), for "테스트 공유".
+export const siteUrl = () => `${location.origin}/`
+
 // Native share sheet first (KakaoTalk, Messages, etc. show up there on phones);
-// otherwise copy the link. Returns what happened so the button can say so.
-export async function shareLink(url: string, text: string): Promise<'shared' | 'copied' | 'cancelled' | 'failed'> {
+// otherwise copy the link. Only the link is sent: its preview carries the text.
+export async function shareLink(url: string): Promise<'shared' | 'copied' | 'cancelled' | 'failed'> {
   if (navigator.share) {
     try {
-      await navigator.share({ title: 'Why on Earth', text, url })
+      await navigator.share({ url })
       return 'shared'
     } catch (e) {
       if ((e as Error).name === 'AbortError') return 'cancelled'
@@ -59,50 +62,5 @@ export async function copyLink(url: string): Promise<'copied' | 'failed'> {
     const ok = document.execCommand('copy')
     ta.remove()
     return ok ? 'copied' : 'failed'
-  }
-}
-
-// KakaoTalk via the Kakao JS SDK. Needs VITE_KAKAO_JS_KEY and the site domain registered
-// in Kakao Developers; without the key the button is not shown at all.
-export const KAKAO_KEY: string | undefined = import.meta.env?.VITE_KAKAO_JS_KEY
-
-type KakaoSDK = { isInitialized(): boolean; init(key: string): void; Share: { sendScrap(o: { requestUrl: string }): void } }
-declare global {
-  interface Window {
-    Kakao?: KakaoSDK
-  }
-}
-
-let kakaoLoading: Promise<KakaoSDK> | null = null
-function loadKakao(): Promise<KakaoSDK> {
-  kakaoLoading ??= new Promise((resolve, reject) => {
-    const s = document.createElement('script')
-    s.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js'
-    s.crossOrigin = 'anonymous'
-    s.onload = () => (window.Kakao ? resolve(window.Kakao) : reject(new Error('Kakao SDK missing')))
-    s.onerror = () => {
-      kakaoLoading = null
-      reject(new Error('Kakao SDK failed to load'))
-    }
-    document.head.appendChild(s)
-  })
-  return kakaoLoading
-}
-
-// Preload so the tap itself can open KakaoTalk without waiting on the network.
-export function preloadKakao() {
-  if (KAKAO_KEY) loadKakao().catch(() => {})
-}
-
-export async function shareKakao(url: string): Promise<boolean> {
-  if (!KAKAO_KEY) return false
-  try {
-    const k = await loadKakao()
-    if (!k.isInitialized()) k.init(KAKAO_KEY)
-    // Scrap uses the page's OG tags for the preview card.
-    k.Share.sendScrap({ requestUrl: url })
-    return true
-  } catch {
-    return false
   }
 }

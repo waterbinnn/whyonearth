@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SPECIES } from '../data/species'
+import { SITE_DESC } from '../lib/copy'
 import type { PrisonRecord } from '../lib/record'
 import { AsciiPortrait } from './AsciiPortrait'
 
@@ -26,15 +27,8 @@ export function Main({ onStart, onReplay }: { onStart: () => void; onReplay: () 
   }, [])
   return (
     <section className="flex min-h-dvh flex-col justify-between gutter pt-4 pb-6">
-      <div className="flex items-start justify-between font-mono fs-10 leading-relaxed text-gray">
-        <div>
-          <div className="text-paper">OLD EMPIRE / PRISON REGISTRY</div>
-          <div>&gt; 기억 삭제 장치 오류 감지</div>
-          <div>&gt; 일부 수감 기록 복원 가능</div>
-        </div>
-        <button className="py-1 text-paper/70 underline-offset-4 hover:text-paper hover:underline" onClick={onReplay}>
-          ↺ 스토리
-        </button>
+      <div className="flex justify-center pt-2 text-paper/60">
+        <Ufo size={34} />
       </div>
 
       <div className="relative mx-auto w-full max-w-[calc(420px*var(--ui))]">
@@ -52,18 +46,49 @@ export function Main({ onStart, onReplay }: { onStart: () => void; onReplay: () 
           지구에 있습니까?
         </h1>
         <p className="mx-auto mt-3 max-w-[calc(300px*var(--ui))] text-center font-pixel fs-12 leading-[1.7] text-fog break-keep">
-          우주에서 사고를 친 자들은 기억이 지워진 채 지구에 갇혔습니다. 기억은 지워져도 버릇은 남습니다. 생년월일을
-          넣으면 당신이 지구 이전의 삶에서 지은 죄를 찾아 드립니다.
+          {SITE_DESC}
         </p>
       </div>
 
       <div className="mx-auto flex w-full max-w-[var(--col)] flex-col gap-2.5">
         <Btn onClick={onStart}>내 수감 기록 열람하기</Btn>
+        <button
+          className="flex h-[calc(40px*var(--ui))] items-center justify-center gap-2.5 border border-paper/40 px-4 font-pixel fs-13 text-paper transition-colors hover:border-paper hover:bg-paper/10"
+          onClick={onReplay}
+        >
+          <Ufo />
+          로스웰에서 무슨 일이 있었나
+        </button>
         <div className="text-center font-mono fs-9 text-gray">
           FOR ENTERTAINMENT ONLY · 입력값은 서버에 저장되지 않습니다
         </div>
       </div>
     </section>
+  )
+}
+
+// Tiny pixel UFO: the app mark on the main page and the backstory button.
+function Ufo({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={(size * 14) / 22} viewBox="0 0 22 14" aria-hidden className="shrink-0" shapeRendering="crispEdges">
+      <g fill="currentColor">
+        <rect x="8" y="0" width="6" height="2" />
+        <rect x="6" y="2" width="10" height="2" />
+        <rect x="2" y="4" width="18" height="2" />
+        <rect x="0" y="6" width="22" height="2" />
+        <rect x="2" y="8" width="18" height="2" />
+        <rect x="5" y="10" width="2" height="2" />
+        <rect x="10" y="10" width="2" height="2" />
+        <rect x="15" y="10" width="2" height="2" />
+        <rect x="4" y="12" width="1" height="2" />
+        <rect x="17" y="12" width="1" height="2" />
+      </g>
+      <g fill="#2340ff">
+        <rect x="4" y="6" width="2" height="2" />
+        <rect x="10" y="6" width="2" height="2" />
+        <rect x="16" y="6" width="2" height="2" />
+      </g>
+    </svg>
   )
 }
 
@@ -195,7 +220,7 @@ export function RecoveryLog({ record, onDone }: { record: PrisonRecord; onDone: 
 
   useEffect(() => {
     const fast = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const step = fast ? 120 : 480
+    const step = fast ? 60 : 200 // about 1.5s in all
     const timers = lines.map((_, i) => setTimeout(() => setShown(i + 1), step * (i + 1)))
     timers.push(setTimeout(() => done.current(), step * (lines.length + 1.5)))
     return () => timers.forEach(clearTimeout)
