@@ -8,6 +8,8 @@ const GLYPHS = RAMP + LINES
 const CHAR_ASPECT = 0.6 // cell width / cell height
 const SUB = 4 // sub-samples per cell side, for line direction
 export const INK = { blue: '#2340ff', gray: '#9a9da4', white: '#f0efea' }
+// Same three plates for a paper background: the highlight plate is black and glyphs multiply.
+const INK_LIGHT = { blue: '#2340ff', gray: '#33363d', white: '#070708' }
 
 export type Field = { cols: number; rows: number; lum: Float32Array; dir: Int8Array }
 
@@ -68,8 +70,8 @@ export function toField(src: HTMLCanvasElement, cols: number): Field {
 }
 
 // Pre-rendered glyphs per ink so each frame is just drawImage calls.
-function makeAtlas(cw: number, ch: number) {
-  const inks = [INK.blue, INK.gray, INK.white]
+function makeAtlas(cw: number, ch: number, ink: typeof INK) {
+  const inks = [ink.blue, ink.gray, ink.white]
   const atlas = document.createElement('canvas')
   atlas.width = GLYPHS.length * cw
   atlas.height = inks.length * ch
@@ -89,7 +91,8 @@ const noise = (n: number) => frac(Math.sin(n * 12.9898) * 43758.5453)
 
 export type Renderer = { draw: (t: number, still?: boolean) => void }
 
-export function createRenderer(canvas: HTMLCanvasElement, field: Field, cellW = 10): Renderer {
+// `light`: draw for a paper background (dark inks, no glow).
+export function createRenderer(canvas: HTMLCanvasElement, field: Field, cellW = 10, light = false): Renderer {
   const cellH = Math.round(cellW / CHAR_ASPECT)
   const { cols, rows, lum, dir } = field
   canvas.width = cols * cellW
@@ -101,7 +104,8 @@ export function createRenderer(canvas: HTMLCanvasElement, field: Field, cellW = 
   frame.height = canvas.height
   const ctx = frame.getContext('2d')!
   const canBlur = 'filter' in out
-  const atlas = makeAtlas(cellW, cellH)
+  const atlas = makeAtlas(cellW, cellH, light ? INK_LIGHT : INK)
+  const blend: GlobalCompositeOperation = light ? 'multiply' : 'lighter'
   const off = cellW * 0.5
   const cell = (x: number, y: number) => {
     const xi = Math.round(x)
@@ -139,7 +143,7 @@ export function createRenderer(canvas: HTMLCanvasElement, field: Field, cellW = 
         const r = cell(si + 1, sj + (j % 2))
         const x = i * cellW
         const y = j * cellH
-        ctx.globalCompositeOperation = 'lighter'
+        ctx.globalCompositeOperation = blend
         if (b >= 0 && lum[b] > 0.04) glyph(0, b, shimmer, x - off, y - off * 0.3)
         if (r >= 0 && lum[r] > 0.04) glyph(1, r, shimmer, x + off, y + off * 0.3)
         ctx.globalCompositeOperation = 'source-over'
@@ -151,7 +155,13 @@ export function createRenderer(canvas: HTMLCanvasElement, field: Field, cellW = 
     if (still) {
       out.clearRect(0, 0, canvas.width, canvas.height)
       out.drawImage(frame, 0, 0)
-      if (canBlur) {
+      if (light) {
+        // Thin glyphs wash out on paper: print the frame a second time, one pixel over.
+        out.globalAlpha = 0.7
+        out.drawImage(frame, 1, 0)
+        out.globalAlpha = 1
+      }
+      if (canBlur && !light) {
         // Baked-in glow for exported images (live view glows via CSS instead).
         out.save()
         out.globalCompositeOperation = 'lighter'

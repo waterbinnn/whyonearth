@@ -5,9 +5,9 @@ import { createRenderer, toField } from '../lib/ascii'
 import { rng } from '../lib/seed'
 import { drawShape } from '../lib/shapes'
 
-type Props = { shape: ShapeId | SceneId; seed: number; cols?: number; frozen?: boolean; className?: string }
+type Props = { shape: ShapeId | SceneId; seed: number; cols?: number; frozen?: boolean; light?: boolean; className?: string }
 
-export function AsciiPortrait({ shape, seed, cols = 60, frozen = false, className }: Props) {
+export function AsciiPortrait({ shape, seed, cols = 60, frozen = false, light = false, className }: Props) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function AsciiPortrait({ shape, seed, cols = 60, frozen = false, classNam
     document.fonts.load('12px GalmuriMono11').then(() => {
       if (!alive) return
       const field = toField(drawShape(shape, rng(seed)), cols)
-      const renderer = createRenderer(canvas, field)
+      const renderer = createRenderer(canvas, field, 10, light)
       if (still) return renderer.draw(1.3, true)
       let last = 0
       const loop = (now: number) => {
@@ -34,7 +34,7 @@ export function AsciiPortrait({ shape, seed, cols = 60, frozen = false, classNam
       alive = false
       cancelAnimationFrame(raf)
     }
-  }, [shape, seed, cols, frozen])
+  }, [shape, seed, cols, frozen, light])
 
   return (
     <canvas
