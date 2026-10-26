@@ -33,7 +33,11 @@ export function StoryFrame({ record, nickname, ref }: Props) {
       />
       <div className="vignette" />
       <div className="relative flex h-full flex-col items-center px-[28px] pt-5 pb-3">
-        <div className="glow text-center font-big text-[20px] leading-tight">지구 이전의 삶과 죄목</div>
+        <div className="glow text-center font-big text-[22px] leading-[1.25]">
+          당신은 무슨 죄로
+          <br />
+          지구에 왔을까?
+        </div>
         {/* zoom (not transform) so the smaller card also takes less layout space */}
         <div className="mt-2.5" style={{ width: 360, zoom: 304 / 360 }}>
           <PrisonCard record={record} nickname={nickname} frozen compact />
@@ -42,7 +46,7 @@ export function StoryFrame({ record, nickname, ref }: Props) {
           <Incident record={record} size="sm" />
         </div>
         <div className="mt-auto text-center font-pixel leading-[1.6]">
-          <div className="text-[11px] text-paper">당신은 무슨 죄로 지구에 왔을까?</div>
+          <div className="text-[11px] text-paper">별자리 외계 사주</div>
           <div className="font-mono text-[9px] text-gray">{location.host}</div>
         </div>
       </div>
