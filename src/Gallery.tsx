@@ -57,7 +57,7 @@ export function Gallery() {
 
 // The main page as a link preview: a paper sheet with one big specimen in the middle, drawn
 // in dark ink inside a dashed annotation box. The copy names the premise (a prison planet), the
-// Roswell hook and what this is (a birthday personality test).
+// Roswell hook and what this is (a zodiac reading).
 // Chat apps show it at 300-450px wide, so there is no grain or glow and nothing under 28px.
 function OgImage() {
   const handle = 'absolute h-[12px] w-[12px] border-2 border-ink bg-paper'
@@ -87,7 +87,7 @@ function OgImage() {
         </div>
       </div>
       <div className="flex w-[400px] flex-col items-end justify-between py-10 pr-8">
-        <span className="bg-ink px-3 py-1 font-mono text-[28px] leading-[1.4] text-paper">생년월일 성격 테스트</span>
+        <span className="bg-ink px-3 py-1 font-mono text-[28px] leading-[1.4] text-paper">별자리 외계 사주</span>
         {/* Galmuri has no bold cut: a 1px same-color shadow thickens the strokes. */}
         <p className="self-start font-big text-[48px] leading-[1.25] whitespace-nowrap text-plate" style={{ textShadow: '1px 0 0 currentColor' }}>
           로스웰에
