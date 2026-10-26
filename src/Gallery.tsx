@@ -1,14 +1,15 @@
 // Dev pages. ?gallery: every figure. ?gallery=<shape>: one figure large.
 // ?portrait=<shape>: a 420x504 species portrait for share previews (public/og/<shape>.png).
-// ?icon: the 512x512 app icon. ?og: the 1200x630 link preview image (screenshot it into public/og.png).
+// ?icon: the 512x512 app icon. ?og: the 1200x630 link preview image. Regenerate public/og.png with:
+//   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
+//     --window-size=1200,630 --virtual-time-budget=6000 --user-data-dir=/tmp/og-chrome \
+//     --screenshot=public/og.png "http://localhost:5179/?og"
 // ?card= / ?report= / ?story=YYYY-MM-DD: the card, card + report, or story frame for that birthday.
 import { AsciiPortrait } from './components/AsciiPortrait'
 import { PrisonCard } from './components/PrisonCard'
 import { Report } from './components/Report'
 import { StoryFrame } from './components/StoryFrame'
-import { StarDust } from './components/TripBackground'
 import { SPECIES, type ShapeId } from './data/species'
-import { SITE_DESC } from './lib/copy'
 import { makeRecord } from './lib/record'
 
 export function Gallery() {
@@ -54,27 +55,49 @@ export function Gallery() {
   )
 }
 
-// The main page as a link preview: dark sky, a falling beam of light, one glowing figure,
-// the small blue tag, the title and the intro line.
+// The main page as a link preview: a paper sheet with one big specimen in the middle, drawn
+// in dark ink inside a dashed annotation box. The copy names the premise (a prison planet), the
+// Roswell hook and what this is (a zodiac reading).
+// Chat apps show it at 300-450px wide, so there is no grain or glow and nothing under 28px.
 function OgImage() {
+  const handle = 'absolute h-[12px] w-[12px] border-2 border-ink bg-paper'
   return (
-    <div className="grain relative flex overflow-hidden bg-ink text-paper" style={{ width: 1200, height: 630 }}>
-      <StarDust count={160} />
-      <div className="beam" style={{ left: 330, width: 460, animation: 'none' }} />
-      <div className="vignette" />
-      <div className="relative flex w-[660px] items-center justify-center">
-        <div className="w-[400px] opacity-95">
-          <AsciiPortrait shape="halo" seed={7} frozen />
+    <div className="relative flex overflow-hidden bg-paper text-ink" style={{ width: 1200, height: 630 }}>
+      <div className="flex w-[320px] flex-col justify-between py-10 pl-8">
+        <span className="self-start bg-plate px-3 py-1 font-mono text-[28px] leading-[1.4] tracking-[0.12em] text-paper">WHY ON EARTH</span>
+        <h1 className="font-big text-[66px] leading-[1.2] whitespace-nowrap" style={{ textShadow: '1px 0 0 currentColor' }}>
+          지구는
+          <br />
+          우주의
+          <br />
+          감옥이다
+        </h1>
+      </div>
+      <div className="dotgrid-ink relative flex flex-1 items-end justify-center">
+        <div className="relative w-[480px]">
+          <AsciiPortrait shape="grey" seed={7} frozen light />
+          <div className="pointer-events-none absolute top-[6%] left-[14%] h-[60%] w-[72%] border-2 border-dashed border-ink/70">
+            <span className={`${handle} -top-[7px] -left-[7px]`} />
+            <span className={`${handle} -top-[7px] -right-[7px]`} />
+            <span className={`${handle} -bottom-[7px] -left-[7px]`} />
+            <span className={`${handle} -right-[7px] -bottom-[7px]`} />
+            <span className="absolute -top-[44px] left-0 font-mono text-[28px] text-plate">SPECIMEN #0001</span>
+          </div>
+          <div className="absolute top-0 bottom-0 left-[68%] w-[2px] bg-[repeating-linear-gradient(to_bottom,#2340ff_0_8px,transparent_8px_14px)]" />
         </div>
       </div>
-      <div className="relative flex flex-1 flex-col justify-center pr-14">
-        <span className="self-start bg-plate px-3 py-1 font-mono text-[20px] tracking-[0.18em] text-paper">WHY ON EARTH</span>
-        <h1 className="glow mt-6 font-big text-[60px] leading-[1.2] whitespace-nowrap">
-          당신은 왜
+      <div className="flex w-[400px] flex-col items-end justify-between py-10 pr-8">
+        <span className="bg-ink px-3 py-1 font-mono text-[28px] leading-[1.4] text-paper">별자리 외계 사주</span>
+        {/* Galmuri has no bold cut: a 1px same-color shadow thickens the strokes. */}
+        <p className="self-start font-big text-[48px] leading-[1.25] whitespace-nowrap text-plate" style={{ textShadow: '1px 0 0 currentColor' }}>
+          로스웰에
           <br />
-          지구에 있습니까?
-        </h1>
-        <p className="mt-6 max-w-[440px] font-pixel text-[21px] leading-[1.75] text-fog break-keep">{SITE_DESC}</p>
+          추락한
+          <br />
+          외계인이 밝힌
+          <br />
+          당신의 죄
+        </p>
       </div>
     </div>
   )

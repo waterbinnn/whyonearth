@@ -21,7 +21,7 @@ export default function handler(req: Request): Response {
 
   const app = new URL(`/?${q}`, url).href
   const page = new URL(`/s/${token}${nq}`, url).href
-  const image = new URL(`/api/og?${q}`, url).href
+  const image = new URL(`/api/og?${q}&v=2`, url).href
   // Same title and text as the main page; the preview image shows this person's result.
   const title = SITE_TITLE
   const desc = SITE_DESC
