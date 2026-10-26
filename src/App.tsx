@@ -145,22 +145,24 @@ function Result({ record, nickname, isShared, onAgain, onMine }: ResultProps) {
           </Btn>
         ) : (
           <>
+            <div className="w-full font-mono fs-9 tracking-[0.18em] text-gray">/ SHARE — 결과 공유</div>
             <div className="flex w-full flex-col gap-2">
+              {/* Named after what gets saved, as test sites do; on phones the share sheet
+                  that opens here already offers both "save image" and Instagram. */}
               <Btn disabled={!image} onClick={() => image && shareOrDownload(image)}>
-                {image ? '이미지 저장' : '이미지 만드는 중…'}
+                {image ? '결과 이미지 저장' : '이미지 만드는 중…'}
               </Btn>
-              <div className="grid grid-cols-2 gap-2">
-                <Btn tone="ghost" onClick={() => share(shareLinkUrl(record.birth, nickname))}>
-                  결과 공유
-                </Btn>
-                <Btn tone="ghost" onClick={() => share(siteUrl())}>
-                  테스트 공유
-                </Btn>
-              </div>
+              <Btn tone="ghost" onClick={() => share(shareLinkUrl(record.birth, nickname))}>
+                결과 공유하기
+              </Btn>
               <Btn tone="ghost" onClick={onAgain}>
                 다른 생일 열람하기
               </Btn>
             </div>
+            {/* Sharing the test itself is secondary: a small text link at the very bottom. */}
+            <button className="mt-2 font-pixel fs-11 text-gray underline underline-offset-4 hover:text-paper" onClick={() => share(siteUrl())}>
+              친구에게 테스트 보내기
+            </button>
           </>
         )}
       </div>
