@@ -1,10 +1,12 @@
 // The inmate record, styled as an Old Empire observation plate:
 // FITS-like header blocks in electric blue around an x-ray ASCII figure.
+import { t } from '../lib/locale'
 import type { PrisonRecord } from '../lib/record'
 import { AsciiPortrait } from './AsciiPortrait'
 
 // compact: shorter portrait, for the story image where space is tight.
-type Props = { record: PrisonRecord; nickname?: string; frozen?: boolean; compact?: boolean }
+// noVerdict: leave out the verdict line (the story image's incident report already tells it).
+type Props = { record: PrisonRecord; nickname?: string; frozen?: boolean; compact?: boolean; noVerdict?: boolean }
 
 // One header line: KEY = VALUE / comment
 function Row({ k, v, c }: { k: string; v: string; c?: string }) {
@@ -34,17 +36,21 @@ function Selection() {
 
 // The species, large: the first thing on the plate, so nobody has to look for it.
 // It sits in the same 54px key column as the rows below.
-function SpeciesLine({ ko, en }: { ko: string; en: string }) {
+function SpeciesLine({ name, tag }: { name: string; tag: string }) {
   return (
     <div className="mb-1.5 grid grid-cols-[54px_1fr] items-center gap-x-1 border-b border-dashed border-paper/45 pb-1.5">
       <span className="leading-[1.3]">
         SPECIES
-        <br />
-        <span className="text-paper/65">종족</span>
+        {t.speciesSub && (
+          <>
+            <br />
+            <span className="text-paper/65">{t.speciesSub}</span>
+          </>
+        )}
       </span>
       <span className="flex min-w-0 items-baseline justify-between gap-2">
-        <span className="glow truncate font-big text-[26px] leading-[1.15]">{ko}</span>
-        <span className="shrink-0 tracking-[0.12em] text-paper/80">{en}</span>
+        <span className="glow truncate font-big text-[26px] leading-[1.15]">{name}</span>
+        <span className="shrink-0 tracking-[0.12em] text-paper/80">{tag}</span>
       </span>
     </div>
   )
@@ -58,21 +64,21 @@ function Stamp() {
       aria-hidden
     >
       <div className="text-[9px] leading-tight tracking-[0.18em]">MEMORY WIPED</div>
-      <div className="font-pixel text-[9px] leading-tight">기억 삭제 완료</div>
+      <div className={`text-[9px] leading-tight ${t.stamp === 'CASE CLOSED' ? 'tracking-[0.18em]' : 'font-pixel'}`}>{t.stamp}</div>
     </div>
   )
 }
 
-export function PrisonCard({ record, nickname, frozen, compact }: Props) {
+export function PrisonCard({ record, nickname, frozen, compact, noVerdict }: Props) {
   const { crime, species } = record
   return (
     <article className="grain relative mx-auto w-full max-w-[var(--card-max,360px)] overflow-hidden border border-paper/25 bg-ink font-mono text-paper">
       <header className="bg-plate px-2.5 py-2 text-[10px] leading-[1.5]">
-        <SpeciesLine ko={species.ko} en={species.en} />
-        {nickname && <Row k="NAME" v={`'${nickname}'`} c="이번 생의 이름" />}
-        <Row k="ZODIAC" v={`'${species.origin.en}'`} c={species.origin.ko} />
-        <Row k="REBIRTH" v={`${record.reincarnations}`} c="환생 횟수" />
-        {record.wanted && <Row k="WANTED" v="'LEVEL MAX'" c="우주 최고 수배범" />}
+        <SpeciesLine name={species.name} tag={species.home ?? species.en} />
+        {nickname && <Row k="NAME" v={`'${nickname}'`} c={t.nameNote} />}
+        <Row k="ZODIAC" v={`'${species.origin.en}'`} c={species.origin.name} />
+        <Row k="REBIRTH" v={`${record.reincarnations}`} c={t.rebirthNote} />
+        {record.wanted && <Row k="WANTED" v="'LEVEL MAX'" c={t.wantedNote} />}
       </header>
 
       <div className={`dotgrid relative flex justify-center overflow-hidden bg-coal ${compact ? 'h-[158px]' : 'h-[268px]'}`}>
@@ -88,10 +94,10 @@ export function PrisonCard({ record, nickname, frozen, compact }: Props) {
 
       <section className="relative border-t border-paper/15 px-3 pt-3 pb-3.5">
         <Stamp />
-        <div className="text-[10px] text-gray">/ CHARGE ..... 죄명</div>
-        <h2 className="glow mt-1.5 pr-[84px] font-big text-[28px] leading-[1.15] break-keep">{crime.ko}</h2>
+        <div className="text-[10px] text-gray">/ CHARGE .....{t.chargeSub}</div>
+        <h2 className="glow mt-1.5 pr-[84px] font-big text-[28px] leading-[1.15] break-keep">{crime.name}</h2>
         <div className="mt-1 text-[11px] tracking-[0.14em] text-fog">{crime.en}</div>
-        <p className="mt-2.5 font-pixel text-[12px] leading-[1.7] text-paper/90 break-keep">{record.verdict}</p>
+        {!noVerdict && <p className="mt-2.5 font-pixel text-[12px] leading-[1.7] text-paper/90 break-keep">{record.verdict}</p>}
       </section>
     </article>
   )

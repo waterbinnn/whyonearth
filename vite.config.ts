@@ -14,6 +14,8 @@ const ogUrls = (): Plugin => ({
   transformIndexHtml: (html) => html.replaceAll('__SITE_URL__', siteUrl),
 })
 
+// Two pages: / (Korean) and /en/ (English). Same app; each has its own static preview tags.
 export default defineConfig({
   plugins: [react(), tailwindcss(), ogUrls()],
+  build: { rollupOptions: { input: { main: 'index.html', en: 'en/index.html' } } },
 })

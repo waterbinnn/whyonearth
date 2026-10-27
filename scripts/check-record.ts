@@ -1,5 +1,6 @@
-import { SPECIES } from '../src/data/species'
-import { makeRecord } from '../src/lib/record'
+import { MOST_WANTED, SPECIES } from '../src/data/species'
+import { EN_TEXT, SPECIES_EN } from '../src/data/species.en'
+import { localizeRecord, makeRecord } from '../src/lib/record'
 import { zodiacIndex } from '../src/lib/zodiac'
 
 // Sign boundaries. The real crossing moves by a day between years, so these cases
@@ -26,8 +27,8 @@ const start = Date.UTC(1960, 0, 1)
 const N = 20000
 for (let i = 0; i < N; i++) {
   const r = makeRecord(new Date(start + i * 86400000).toISOString().slice(0, 10))
-  count(species, r.species.ko)
-  count(crimes, r.crime.ko)
+  count(species, r.species.name)
+  count(crimes, r.crime.name)
   count(versions, String(r.species.symptoms.indexOf(r.symptoms)))
 }
 console.log('species', Object.fromEntries([...species].map(([k, v]) => [k, `${((v / N) * 100).toFixed(1)}%`])))
@@ -35,5 +36,32 @@ const cv = [...crimes.values()]
 console.log('crimes used', cv.length, 'min', Math.min(...cv), 'max', Math.max(...cv))
 console.log('symptom versions', Object.fromEntries(versions))
 const a = makeRecord('1995-03-14')
-console.log(a.species.origin.ko, '/', a.species.ko, '/', a.crime.ko, '/', a.verdict)
+console.log(a.species.origin.name, '/', a.species.name, '/', a.crime.name, '/', a.verdict)
 console.log(JSON.stringify(a) === JSON.stringify(makeRecord('1995-03-14')) ? 'deterministic OK' : 'FAIL')
+
+// English: the text must line up one to one with the Korean, so the same birthday gets the
+// same species, crime and symptoms. Titles must fit one line on the card.
+const bad: string[] = []
+if (EN_TEXT.species.length !== SPECIES.length) bad.push(`species ${EN_TEXT.species.length}`)
+if (EN_TEXT.mostWanted.length !== MOST_WANTED.length) bad.push(`most wanted ${EN_TEXT.mostWanted.length}`)
+SPECIES.forEach((s, i) => {
+  const e = EN_TEXT.species[i]
+  if (!e) return
+  if (e.crimes.length !== s.crimes.length) bad.push(`${e.name} crimes ${e.crimes.length}`)
+  if (e.merits.length !== s.merits.length) bad.push(`${e.name} merits ${e.merits.length}`)
+  if (e.symptoms.length !== s.symptoms.length || e.symptoms.some((v, j) => v.length !== s.symptoms[j].length))
+    bad.push(`${e.name} symptoms`)
+})
+for (const c of [...EN_TEXT.species.flatMap((s) => s.crimes), ...EN_TEXT.mostWanted])
+  if (c.title.length > 20) bad.push(`title too long: ${c.title}`)
+for (let i = 0; i < N; i++) {
+  const ko = makeRecord(new Date(start + i * 86400000).toISOString().slice(0, 10))
+  const en = localizeRecord(ko, 'en')
+  if (!en.crime || !en.symptoms || SPECIES_EN.indexOf(en.species) !== SPECIES.indexOf(ko.species)) {
+    bad.push(`no English for ${ko.birth}`)
+    break
+  }
+}
+const e = localizeRecord(a, 'en')
+console.log(e.species.name, '/', e.crime.name, '/', e.verdict)
+console.log(bad.length ? `English FAIL: ${bad.join(', ')}` : 'English lines up OK')

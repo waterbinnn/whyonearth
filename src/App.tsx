@@ -6,9 +6,9 @@ import { SpeciesIndex } from './components/SpeciesIndex'
 import { StoryIntro } from './components/StoryIntro'
 import { StoryFrame } from './components/StoryFrame'
 import { TripBackground } from './components/TripBackground'
-import { SPECIES } from './data/species'
 import { nodeToFile, shareOrDownload } from './lib/exportImage'
-import { makeRecord, type PrisonRecord } from './lib/record'
+import { makeRecordL as makeRecord, BASE, SPECIES_L, t } from './lib/locale'
+import type { PrisonRecord } from './lib/record'
 import { encodeBirth, readSharedRecord, shareLink, shareLinkUrl, shareUrl, siteUrl } from './lib/share'
 
 type Step = 'story' | 'main' | 'form' | 'recovering' | 'result' | 'species'
@@ -41,7 +41,7 @@ export function App() {
 
   // Keep the address bar pointing at the current record so it can be copied or reloaded.
   useEffect(() => {
-    const url = step === 'result' && record ? shareUrl(record.birth, nickname) : '/'
+    const url = step === 'result' && record ? shareUrl(record.birth, nickname) : BASE
     if (url !== location.href) history.replaceState(null, '', url)
   }, [step, record, nickname])
 
@@ -90,12 +90,12 @@ export function App() {
       {step === 'species' &&
         (indexFrom === 'result' && record ? (
           <SpeciesIndex
-            mine={{ idx: SPECIES.indexOf(record.species), label: isShared ? '이 기록' : '나의 종족' }}
+            mine={{ idx: SPECIES_L.indexOf(record.species), label: isShared ? t.indexShared : t.indexMine }}
             onBack={() => setStep('result')}
-            backLabel="수감 기록으로 돌아가기"
+            backLabel={t.backToRecord}
           />
         ) : (
-          <SpeciesIndex onBack={() => setStep('main')} backLabel="처음으로" onStart={() => setStep('form')} />
+          <SpeciesIndex onBack={() => setStep('main')} backLabel={t.backToStart} onStart={() => setStep('form')} />
         ))}
     </main>
   )
@@ -139,8 +139,8 @@ function Result({ record, nickname, isShared, onAgain, onMine, onSpecies }: Resu
 
   const share = async (url: string) => {
     const r = await shareLink(url)
-    if (r === 'copied') setToast('링크를 복사했습니다')
-    if (r === 'failed') setToast('링크를 복사하지 못했습니다')
+    if (r === 'copied') setToast(t.copied)
+    if (r === 'failed') setToast(t.copyFailed)
   }
 
   return (
@@ -157,8 +157,8 @@ function Result({ record, nickname, isShared, onAgain, onMine, onSpecies }: Resu
 
       {isShared && (
         <div className="flex w-full max-w-[var(--col)] flex-col gap-2">
-          <Btn onClick={onMine}>내 수감 기록 열람하기</Btn>
-          <p className="text-center font-pixel fs-11 text-gray break-keep">생년월일만 넣으면 당신의 죄목이 나옵니다.</p>
+          <Btn onClick={onMine}>{t.openMine}</Btn>
+          <p className="text-center font-pixel fs-11 text-gray break-keep">{t.sharedHint}</p>
         </div>
       )}
 
@@ -168,27 +168,27 @@ function Result({ record, nickname, isShared, onAgain, onMine, onSpecies }: Resu
       <div className="mt-6 flex w-full max-w-[var(--col)] flex-col items-center gap-3 border-t border-dashed border-paper/20 pt-6">
         {isShared ? (
           <Btn className="w-full" onClick={onMine}>
-            내 수감 기록 열람하기
+            {t.openMine}
           </Btn>
         ) : (
           <>
-            <div className="w-full font-mono fs-9 tracking-[0.18em] text-gray">/ SHARE — 결과 공유</div>
+            <div className="w-full font-mono fs-9 tracking-[0.18em] text-gray">/ SHARE{t.shareTitle !== 'SHARE' && ` — ${t.shareTitle}`}</div>
             <div className="flex w-full flex-col gap-2">
               {/* Named after what gets saved, as test sites do; on phones the share sheet
                   that opens here already offers both "save image" and Instagram. */}
               <Btn disabled={!image} onClick={() => image && shareOrDownload(image)}>
-                {image ? '결과 이미지 저장' : '이미지 만드는 중…'}
+                {image ? t.saveImage : t.makingImage}
               </Btn>
               <Btn tone="ghost" onClick={() => share(shareLinkUrl(record.birth, nickname))}>
-                결과 공유하기
+                {t.shareResult}
               </Btn>
               <Btn tone="ghost" onClick={onAgain}>
-                다른 생일 열람하기
+                {t.another}
               </Btn>
             </div>
             {/* Sharing the test itself is secondary: a small text link at the very bottom. */}
             <button className="mt-2 font-pixel fs-11 text-gray underline underline-offset-4 hover:text-paper" onClick={() => share(siteUrl())}>
-              친구에게 테스트 보내기
+              {t.sendTest}
             </button>
           </>
         )}

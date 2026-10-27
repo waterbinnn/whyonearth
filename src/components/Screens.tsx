@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SPECIES } from '../data/species'
-import { SITE_DESC } from '../lib/copy'
+import { LANG, switchLang, t } from '../lib/locale'
 import type { PrisonRecord } from '../lib/record'
 import { AsciiPortrait } from './AsciiPortrait'
 
@@ -41,30 +41,37 @@ export function Main({ onStart, onReplay, onSpecies }: { onStart: () => void; on
           </span>
         </div>
         <h1 className="glow mt-3 text-center font-big fs-28 leading-[1.2]">
-          당신은 왜
+          {t.title[0]}
           <br />
-          지구에 있습니까?
+          {t.title[1]}
         </h1>
         <p className="mx-auto mt-3 max-w-[calc(300px*var(--ui))] text-center font-pixel fs-12 leading-[1.7] text-fog break-keep">
-          {SITE_DESC}
+          {t.site.desc}
         </p>
       </div>
 
       <div className="mx-auto flex w-full max-w-[var(--col)] flex-col gap-2.5">
-        <Btn onClick={onStart}>내 수감 기록 열람하기</Btn>
+        <Btn onClick={onStart}>{t.openMine}</Btn>
         <button
           className="flex h-[calc(40px*var(--ui))] items-center justify-center gap-2.5 border border-paper/40 px-4 font-pixel fs-13 text-paper transition-colors hover:border-paper hover:bg-paper/10"
           onClick={onReplay}
         >
           <Ufo />
-          로스웰에서 무슨 일이 있었나
+          {t.roswell}
         </button>
         <Btn tone="ghost" onClick={onSpecies}>
-          외계인 종족 도감
+          {t.speciesIndex}
         </Btn>
         <div className="text-center font-mono fs-9 text-gray">
-          FOR ENTERTAINMENT ONLY · 입력값은 서버에 저장되지 않습니다
+          FOR ENTERTAINMENT ONLY · {t.notStored}
         </div>
+        <button
+          className="mx-auto -mt-1 px-3 py-1 font-mono fs-10 tracking-wider text-gray underline underline-offset-4 hover:text-paper"
+          lang={LANG === 'en' ? 'ko' : 'en'}
+          onClick={() => switchLang(LANG === 'en' ? 'ko' : 'en')}
+        >
+          {t.otherLang}
+        </button>
       </div>
     </section>
   )
@@ -122,7 +129,7 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
     e.preventDefault()
     const [yy, mm, dd] = [Number(y), Number(m), Number(d)]
     if (!validDate(yy, mm, dd)) {
-      setError('ERR: 존재하지 않는 날짜입니다. 다시 입력해 주세요.')
+      setError(t.badDate)
       return
     }
     onSubmit(`${yy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`, nick.trim())
@@ -134,8 +141,8 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
     <form onSubmit={submit} className="mx-auto flex min-h-dvh w-full max-w-[calc(var(--col)+2*var(--gutter))] flex-col justify-center gap-7 gutter py-10">
       <div>
         <div className="font-mono fs-11 text-gray">_IDENTIFY ..... ?&gt;</div>
-        <h2 className="glow mt-2 font-big fs-21 leading-snug break-keep">이번 생의 생년월일을 입력하세요</h2>
-        <p className="mt-2 font-pixel fs-12 text-gray break-keep">양력 기준입니다. 같은 생일이면 언제나 같은 기록이 나옵니다.</p>
+        <h2 className="glow mt-2 font-big fs-21 leading-snug break-keep">{t.formTitle}</h2>
+        <p className="mt-2 font-pixel fs-12 text-gray break-keep">{t.formNote}</p>
       </div>
 
       <div className="grid grid-cols-[1.6fr_1fr_1fr] gap-3">
@@ -146,7 +153,7 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
             inputMode="numeric"
             autoFocus
             placeholder="1995"
-            aria-label="태어난 해"
+            aria-label={t.year}
             value={y}
             onChange={(e) => {
               const v = digits(e.target.value, 4)
@@ -162,7 +169,7 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
             className={box}
             inputMode="numeric"
             placeholder="03"
-            aria-label="태어난 달"
+            aria-label={t.month}
             value={m}
             onChange={(e) => {
               const v = digits(e.target.value, 2)
@@ -178,7 +185,7 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
             className={box}
             inputMode="numeric"
             placeholder="14"
-            aria-label="태어난 날"
+            aria-label={t.day}
             value={d}
             onChange={(e) => setD(digits(e.target.value, 2))}
           />
@@ -186,11 +193,11 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
       </div>
 
       <label className="block">
-        <span className="font-mono fs-10 text-paper/50">이름 (선택)</span>
+        <span className="font-mono fs-10 text-paper/50">{t.nameLabel}</span>
         <input
           className="mt-1 w-full border-b border-paper/40 bg-transparent py-1.5 font-pixel text-[max(16px,calc(16px*var(--ui)))] outline-none placeholder:text-paper/25 focus:border-plate"
           maxLength={12}
-          placeholder="이름"
+          placeholder={t.namePlaceholder}
           value={nick}
           onChange={(e) => setNick(e.target.value)}
         />
@@ -199,7 +206,7 @@ export function BirthForm({ onSubmit }: { onSubmit: (birth: string, nickname: st
       {error && <div className="font-mono fs-12 text-[#ff5a6e]">{error}</div>}
 
       <Btn type="submit" disabled={!y || !m || !d}>
-        기록 복원 시작
+        {t.submit}
       </Btn>
     </form>
   )

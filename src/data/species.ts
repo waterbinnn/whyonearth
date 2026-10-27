@@ -19,16 +19,19 @@ export type ShapeId =
   | 'littleGreen'
   | 'jelly'
 
-// `act` is an adnominal clause so it reads "{act} 죄로 ..."; `story` is the incident report.
-export type Crime = { act: string; ko: string; en: string; story: string }
+// `act` is an adnominal clause so it reads "{act} 죄로 ..."; `name` is the charge, `en` the short
+// English tag under it; `story` is the incident report.
+// The English version (species.en.ts) fills the same fields: `act` is a gerund phrase there.
+export type Crime = { act: string; name: string; en: string; story: string }
 
 export type Match = { idx: number; why: string }
 
 export type Species = {
-  ko: string
-  en: string
+  name: string // shown large; Korean here, English in species.en.ts
+  en: string // code name, e.g. REPTILIAN
+  home?: string // English version only: where the species is said to come from, shown in place of `en`
   shape: ShapeId
-  origin: { ko: string; en: string } // zodiac sign, shown on the card and the species index
+  origin: { name: string; en: string } // zodiac sign, shown on the card and the species index
   lore: string // what the internet commonly says about the species, for the species index page
   symptoms: string[][] // versions of bad habits still showing on Earth; one is picked per birthday
   merits: string[] // good points on Earth, one paragraph each
@@ -37,16 +40,16 @@ export type Species = {
   crimes: Crime[]
 }
 
-const c = (act: string, ko: string, en: string, story: string): Crime => ({ act, ko, en, story })
+const c = (act: string, name: string, en: string, story: string): Crime => ({ act, name, en, story })
 
 // Index = zodiac sign: 0 Aries … 11 Pisces.
 export const SPECIES: Species[] = [
   // Aries: 직진, 승부욕, 성급함, 뒤끝 없음 / 호전적인 전사형 파충류 종족
   {
-    ko: '렙틸리언',
+    name: '렙틸리언',
     en: 'REPTILIAN',
     shape: 'reptilian',
-    origin: { ko: '양자리', en: 'ARIES' },
+    origin: { name: '양자리', en: 'ARIES' },
     lore: '비늘 덮인 피부에 세로로 찢어진 눈을 가진 파충류형 인간 종족이다. 사람의 모습으로 변신해 각국의 지배층에 숨어 있다는 음모론으로 유명하다. 용자리에서 왔다는 설도 있다.',
     symptoms: [
       [
@@ -108,10 +111,10 @@ export const SPECIES: Species[] = [
 
   // Taurus: 느긋함, 고집, 먹는 것과 재물, 소유욕 / 금을 캐러 지구에 왔다는 거인 종족
   {
-    ko: '아눈나키',
+    name: '아눈나키',
     en: 'ANUNNAKI',
     shape: 'anunnaki',
-    origin: { ko: '황소자리', en: 'TAURUS' },
+    origin: { name: '황소자리', en: 'TAURUS' },
     lore: '고대 수메르 신화에 나오는 신들의 이름이다. 작가 제카리아 시친은 이들이 행성 니비루에서 온 외계인이며, 금을 캐기 위해 유전자를 조작해 인간을 만들었다고 주장했다.',
     symptoms: [
       [
@@ -173,10 +176,10 @@ export const SPECIES: Species[] = [
 
   // Gemini: 호기심, 말 많음, 변덕, 두 얼굴 / 외계인과 인간의 혼혈
   {
-    ko: '하이브리드',
+    name: '하이브리드',
     en: 'HYBRID',
     shape: 'hybrid',
-    origin: { ko: '쌍둥이자리', en: 'GEMINI' },
+    origin: { name: '쌍둥이자리', en: 'GEMINI' },
     lore: '외계인과 인간 사이에서 태어났다는 혼혈 종족이다. 납치 경험담에는 외계인이 사람을 데려가 혼혈 아이를 만든다는 증언이 자주 나온다. 겉모습은 사람과 거의 같아서 이미 지구에 섞여 산다는 설이 있다.',
     symptoms: [
       [
@@ -238,10 +241,10 @@ export const SPECIES: Species[] = [
 
   // Cancer: 집순이, 식구, 보호 본능, 상처를 잘 받음 / 고양이 얼굴, 인류의 조상이라는 종족
   {
-    ko: '라이란',
+    name: '라이란',
     en: 'LYRAN',
     shape: 'lyran',
-    origin: { ko: '게자리', en: 'CANCER' },
+    origin: { name: '게자리', en: 'CANCER' },
     lore: '거문고자리에서 왔다는 종족으로, 사자나 고양이를 닮은 얼굴로 그려진다. 뉴에이지 채널링에서는 노르딕과 플레이아데스인을 비롯한 여러 인간형 종족의 조상으로 알려져 있다.',
     symptoms: [
       [
@@ -303,10 +306,10 @@ export const SPECIES: Species[] = [
 
   // Leo: 주목받기, 자신감, 무대 체질, 통 큰 마음 / 금발에 키 큰 미남·미녀형 종족
   {
-    ko: '노르딕',
+    name: '노르딕',
     en: 'NORDIC',
     shape: 'nordic',
-    origin: { ko: '사자자리', en: 'LEO' },
+    origin: { name: '사자자리', en: 'LEO' },
     lore: '금발에 키가 크고 북유럽 사람처럼 생긴 인간형 외계인이다. 1970년대 스위스의 빌리 마이어가 플레이아데스에서 온 이들과 여러 번 만났다고 주장하면서 널리 알려졌다.',
     symptoms: [
       [
@@ -368,10 +371,10 @@ export const SPECIES: Species[] = [
 
   // Virgo: 완벽주의, 분석, 깔끔함, 잔소리 / 사람을 데려가 검사한다는 종족
   {
-    ko: '그레이',
+    name: '그레이',
     en: 'GREY',
     shape: 'grey',
-    origin: { ko: '처녀자리', en: 'VIRGO' },
+    origin: { name: '처녀자리', en: 'VIRGO' },
     lore: '회색 피부, 커다란 머리, 새까만 아몬드형 눈을 가진 작은 외계인이다. 1961년 힐 부부 납치 사건 이후 외계인의 대표적인 모습이 되었다. 로스웰에 추락한 외계인도 흔히 이 모습으로 그려진다.',
     symptoms: [
       [
@@ -433,10 +436,10 @@ export const SPECIES: Species[] = [
 
   // Libra: 조화, 미적 감각, 우유부단, 싸움을 싫어함 / 평화를 전하러 왔다는 아름다운 금성인
   {
-    ko: '금성인',
+    name: '금성인',
     en: 'VENUSIAN',
     shape: 'halo',
-    origin: { ko: '천칭자리', en: 'LIBRA' },
+    origin: { name: '천칭자리', en: 'LIBRA' },
     lore: '금성에서 왔다는 인간형 외계인이다. 1952년 조지 아담스키가 캘리포니아 사막에서 금성인 오손을 만났다고 주장하면서 알려졌다. 핵무기의 위험을 경고하러 왔다고 전해진다.',
     symptoms: [
       [
@@ -498,10 +501,10 @@ export const SPECIES: Species[] = [
 
   // Scorpio: 집착, 비밀, 강렬한 눈빛, 통찰, 뒤끝 / 텔레파시를 쓰는 사마귀형 종족
   {
-    ko: '맨티스',
+    name: '맨티스',
     en: 'MANTIS',
     shape: 'mantis',
-    origin: { ko: '전갈자리', en: 'SCORPIO' },
+    origin: { name: '전갈자리', en: 'SCORPIO' },
     lore: '사마귀를 닮은 곤충형 외계인이다. 납치 경험담에서 그레이와 함께 나타나 이들을 지휘하는 존재로 묘사된다. 말 대신 텔레파시로 대화한다고 한다.',
     symptoms: [
       [
@@ -563,10 +566,10 @@ export const SPECIES: Species[] = [
 
   // Sagittarius: 자유, 여행, 낙천, 철학, 직설, 약속 펑크 / 우주를 떠도는 지혜로운 종족
   {
-    ko: '아크투리안',
+    name: '아크투리안',
     en: 'ARCTURIAN',
     shape: 'vortex',
-    origin: { ko: '사수자리', en: 'SAGITTARIUS' },
+    origin: { name: '사수자리', en: 'SAGITTARIUS' },
     lore: '목동자리의 밝은 별 아크투루스에서 왔다는 종족이다. 예언가 에드거 케이시가 우주에서 가장 진보한 문명 중 하나로 언급한 뒤로, 뉴에이지 채널링에 자주 등장한다.',
     symptoms: [
       [
@@ -628,10 +631,10 @@ export const SPECIES: Species[] = [
 
   // Capricorn: 야망, 일 중독, 책임감, 진지함, 규칙 / 군 기지와 일한다는 키 큰 창백한 종족
   {
-    ko: '톨 화이트',
+    name: '톨 화이트',
     en: 'TALL WHITE',
     shape: 'tallWhite',
-    origin: { ko: '염소자리', en: 'CAPRICORN' },
+    origin: { name: '염소자리', en: 'CAPRICORN' },
     lore: '키가 2미터를 넘고 피부가 창백한 인간형 외계인이다. 찰스 홀이 1960년대 네바다의 미 공군 기지에서 근무하며 이들을 목격했다고 주장하면서 알려졌다. 미군과 협력한다는 설이 있다.',
     symptoms: [
       [
@@ -693,10 +696,10 @@ export const SPECIES: Species[] = [
 
   // Aquarius: 별종, 독창성, 반골, 미래 지향, 거리 두기 / 외계인 대중문화의 원조 초록 외계인
   {
-    ko: '리틀 그린맨',
+    name: '리틀 그린맨',
     en: 'LITTLE GREEN MAN',
     shape: 'littleGreen',
-    origin: { ko: '물병자리', en: 'AQUARIUS' },
+    origin: { name: '물병자리', en: 'AQUARIUS' },
     lore: '작은 키에 초록색 피부를 가진, 대중문화 속 외계인의 원형이다. 1950년대 SF 영화와 만화를 거치며 굳어진 모습이다. 1967년 처음 발견된 펄서 신호는 한때 LGM-1, 즉 리틀 그린맨이라는 별명으로 불렸다.',
     symptoms: [
       [
@@ -758,10 +761,10 @@ export const SPECIES: Species[] = [
 
   // Pisces: 몽상, 공감, 예술, 현실 도피 / 시리우스의 바다 행성에서 왔다는 종족
   {
-    ko: '시리안',
+    name: '시리안',
     en: 'SIRIAN',
     shape: 'jelly',
-    origin: { ko: '물고기자리', en: 'PISCES' },
+    origin: { name: '물고기자리', en: 'PISCES' },
     lore: '밤하늘에서 가장 밝은 별 시리우스에서 왔다는 종족이다. 아프리카 도곤족이 맨눈으로 볼 수 없는 시리우스 B를 알고 있었다는 주장과 함께, 물고기를 닮은 존재 놈모가 그들에게 문명을 전했다는 이야기가 퍼졌다.',
     symptoms: [
       [

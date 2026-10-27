@@ -2,6 +2,7 @@
 // every screen (the app's screen-size variables must not leak in).
 //   StoryFrame: 9:16 for Instagram stories, rendered off-screen at 360x640, saved at 3x.
 import type { CSSProperties, Ref } from 'react'
+import { LANG, t } from '../lib/locale'
 import type { PrisonRecord } from '../lib/record'
 import { PrisonCard } from './PrisonCard'
 import { StarDust } from './TripBackground'
@@ -14,7 +15,7 @@ const pinned = (width: number, height?: number) => ({ width, height, '--card-max
 function Incident({ record, size }: { record: PrisonRecord; size: 'sm' | 'md' }) {
   return (
     <div className="w-full border-l border-paper/20 bg-coal/90 px-3 py-2.5">
-      <div className="font-pixel text-[9px] text-gray">사건 경위서</div>
+      <div className="font-pixel text-[9px] text-gray">{t.incident}</div>
       <p className={`mt-1 font-pixel leading-[1.6] text-paper/90 break-keep ${size === 'sm' ? 'text-[10px]' : 'text-[12px]'}`}>
         {record.crime.story}
       </p>
@@ -34,19 +35,21 @@ export function StoryFrame({ record, nickname, ref }: Props) {
       <div className="vignette" />
       <div className="relative flex h-full flex-col items-center px-[28px] pt-5 pb-3">
         <div className="glow text-center font-big text-[22px] leading-[1.25]">
-          당신은 무슨 죄로
+          {t.storyTitle[0]}
           <br />
-          지구에 왔을까?
+          {t.storyTitle[1]}
         </div>
         {/* zoom (not transform) so the smaller card also takes less layout space */}
         <div className="mt-2.5" style={{ width: 360, zoom: 304 / 360 }}>
-          <PrisonCard record={record} nickname={nickname} frozen compact />
+          {/* English charges often take two lines and English text runs longer, so the
+              English image drops the verdict to stay inside 640px. */}
+          <PrisonCard record={record} nickname={nickname} frozen compact noVerdict={LANG === 'en'} />
         </div>
         <div className="mt-2 w-[304px]">
           <Incident record={record} size="sm" />
         </div>
         <div className="mt-auto text-center font-pixel leading-[1.6]">
-          <div className="text-[11px] text-paper">별자리 외계 사주</div>
+          <div className="text-[11px] text-paper">{t.tagline}</div>
           <div className="font-mono text-[9px] text-gray">{location.host}</div>
         </div>
       </div>

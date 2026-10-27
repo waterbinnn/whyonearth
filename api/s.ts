@@ -1,7 +1,8 @@
 // /s/<token>?n=<name> (rewritten here by vercel.json): a tiny page whose preview image shows
 // this person's record, so KakaoTalk and other link previews show their crime.
 // Visitors are sent straight on to the app at /?r=<token>.
-import { SITE_DESC, SITE_TITLE } from '../src/lib/copy'
+// /en/s/<token> arrives with lang=en and stays under /en.
+import { SITE, type Lang } from '../src/lib/copy'
 import { cleanNick, decodeBirth } from '../src/lib/token'
 
 export const config = { runtime: 'edge' }
@@ -12,22 +13,23 @@ export default function handler(req: Request): Response {
   const url = new URL(req.url)
   const token = url.searchParams.get('r') ?? ''
   const birth = decodeBirth(token)
-  if (!birth) return Response.redirect(new URL('/', url).href, 302)
 
+  const lang: Lang = url.searchParams.get('lang') === 'en' ? 'en' : 'ko'
+  const base = lang === 'en' ? '/en/' : '/'
+  if (!birth) return Response.redirect(new URL(base, url).href, 302)
   const nick = cleanNick(url.searchParams.get('n'))
   const q = new URLSearchParams({ r: token })
   if (nick) q.set('n', nick)
   const nq = nick ? `?${new URLSearchParams({ n: nick })}` : ''
 
-  const app = new URL(`/?${q}`, url).href
-  const page = new URL(`/s/${token}${nq}`, url).href
-  const image = new URL(`/api/og?${q}&v=2`, url).href
+  const app = new URL(`${base}?${q}`, url).href
+  const page = new URL(`${base}s/${token}${nq}`, url).href
+  const image = new URL(`/api/og?${q}${lang === 'en' ? '&lang=en' : ''}&v=2`, url).href
   // Same title and text as the main page; the preview image shows this person's result.
-  const title = SITE_TITLE
-  const desc = SITE_DESC
+  const { title, desc } = SITE[lang]
 
   const html = `<!doctype html>
-<html lang="ko">
+<html lang="${lang}">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

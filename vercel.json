@@ -1,3 +1,7 @@
 {
-  "rewrites": [{ "source": "/s/:token", "destination": "/api/s?r=:token" }]
+  "rewrites": [
+    { "source": "/s/:token", "destination": "/api/s?r=:token" },
+    { "source": "/en/s/:token", "destination": "/api/s?r=:token&lang=en" },
+    { "source": "/en", "destination": "/en/index.html" }
+  ]
 }
