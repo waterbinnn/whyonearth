@@ -15,6 +15,9 @@ function Section({ no, en, title, children }: { no: string; en: string; title: s
   )
 }
 
+// 은 after a final consonant, 는 after a vowel.
+const topic = (word: string) => ((word.charCodeAt(word.length - 1) - 0xac00) % 28 ? '은' : '는')
+
 const P = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <p className={`font-pixel fs-13 leading-[1.85] text-fog break-keep ${className}`}>{children}</p>
 )
@@ -44,6 +47,14 @@ export function Report({ record, onSpecies }: { record: PrisonRecord; onSpecies?
   return (
     <div className="w-full max-w-[var(--col)] space-y-8">
       <Section no="01" en="RECORD BEFORE EARTH" title={`지구 이전 기록: ${species.ko}`}>
+        {/* What the species is, before what you did as one. Same text as the species index. */}
+        <div className="mb-4 border border-paper/20 px-3 py-3">
+          <div className="font-mono fs-9 tracking-wider text-gray">
+            SPECIES FILE · {species.en}
+          </div>
+          <div className="mt-1 font-pixel fs-13 text-paper">{species.ko}{topic(species.ko)} 어떤 종족인가</div>
+          <P className="mt-1.5">{species.lore}</P>
+        </div>
         <P>{species.identity}</P>
         <div className="mt-4 border-l border-paper/15 bg-coal/70 px-3 py-3">
           <div className="font-mono fs-9 tracking-wider text-gray">INCIDENT REPORT · 사건 경위서</div>
