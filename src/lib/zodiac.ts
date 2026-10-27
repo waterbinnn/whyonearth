@@ -30,3 +30,10 @@ function julianDay(year: number, month: number, day: number, hourUtc: number): n
 export function zodiacIndex(year: number, month: number, day: number): number {
   return Math.floor(sunLongitude(julianDay(year, month, day, 3)) / 30)
 }
+
+// Usual birthday range of each sign, for display only. The real boundary moves by a day
+// from year to year (see zodiacIndex), so the page calls these approximate.
+export const SIGN_DATES = [
+  '3.21 – 4.19', '4.20 – 5.20', '5.21 – 6.21', '6.22 – 7.22', '7.23 – 8.22', '8.23 – 9.22',
+  '9.23 – 10.22', '10.23 – 11.22', '11.23 – 12.21', '12.22 – 1.19', '1.20 – 2.18', '2.19 – 3.20',
+]

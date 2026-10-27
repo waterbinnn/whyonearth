@@ -32,6 +32,24 @@ function Selection() {
   )
 }
 
+// The species, large: the first thing on the plate, so nobody has to look for it.
+// It sits in the same 54px key column as the rows below.
+function SpeciesLine({ ko, en }: { ko: string; en: string }) {
+  return (
+    <div className="mb-1.5 grid grid-cols-[54px_1fr] items-center gap-x-1 border-b border-dashed border-paper/45 pb-1.5">
+      <span className="leading-[1.3]">
+        SPECIES
+        <br />
+        <span className="text-paper/65">종족</span>
+      </span>
+      <span className="flex min-w-0 items-baseline justify-between gap-2">
+        <span className="glow truncate font-big text-[26px] leading-[1.15]">{ko}</span>
+        <span className="shrink-0 tracking-[0.12em] text-paper/80">{en}</span>
+      </span>
+    </div>
+  )
+}
+
 // Rubber stamp over the charge, slightly crooked.
 function Stamp() {
   return (
@@ -50,15 +68,15 @@ export function PrisonCard({ record, nickname, frozen, compact }: Props) {
   return (
     <article className="grain relative mx-auto w-full max-w-[var(--card-max,360px)] overflow-hidden border border-paper/25 bg-ink font-mono text-paper">
       <header className="bg-plate px-2.5 py-2 text-[10px] leading-[1.5]">
+        <SpeciesLine ko={species.ko} en={species.en} />
         {nickname && <Row k="NAME" v={`'${nickname}'`} c="이번 생의 이름" />}
         <Row k="ZODIAC" v={`'${species.origin.en}'`} c={species.origin.ko} />
-        <Row k="SPECIES" v={`'${species.en}'`} c={species.ko} />
         <Row k="REBIRTH" v={`${record.reincarnations}`} c="환생 횟수" />
         {record.wanted && <Row k="WANTED" v="'LEVEL MAX'" c="우주 최고 수배범" />}
       </header>
 
-      <div className={`dotgrid relative flex justify-center overflow-hidden bg-coal ${compact ? 'h-[186px]' : 'h-[268px]'}`}>
-        <div className={compact ? 'w-[160px] pt-1' : 'w-[230px] pt-1'}>
+      <div className={`dotgrid relative flex justify-center overflow-hidden bg-coal ${compact ? 'h-[158px]' : 'h-[268px]'}`}>
+        <div className={compact ? 'w-[136px] pt-1' : 'w-[230px] pt-1'}>
           <AsciiPortrait shape={species.shape} seed={record.seed} frozen={frozen} />
         </div>
         <Selection />

@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { PrisonCard } from './components/PrisonCard'
 import { Report } from './components/Report'
 import { BirthForm, Btn, Main, RecoveryLog } from './components/Screens'
+import { SpeciesIndex } from './components/SpeciesIndex'
 import { StoryIntro } from './components/StoryIntro'
 import { StoryFrame } from './components/StoryFrame'
 import { TripBackground } from './components/TripBackground'
+import { SPECIES } from './data/species'
 import { nodeToFile, shareOrDownload } from './lib/exportImage'
 import { makeRecord, type PrisonRecord } from './lib/record'
 import { encodeBirth, readSharedRecord, shareLink, shareLinkUrl, shareUrl, siteUrl } from './lib/share'
 
-type Step = 'story' | 'main' | 'form' | 'recovering' | 'result'
+type Step = 'story' | 'main' | 'form' | 'recovering' | 'result' | 'species'
 
 // A shared link (?r=...) opens straight to that record. If this tab made that record
 // itself (a reload), show it as the owner's result rather than a friend's.
@@ -30,12 +32,23 @@ export function App() {
   const [nickname, setNickname] = useState(shared?.nickname ?? '')
   const [isShared, setIsShared] = useState(!!shared && !ownsShared)
   const [burst, setBurst] = useState(false)
+  // Where the species index was opened from, so its back button returns there.
+  const [indexFrom, setIndexFrom] = useState<'main' | 'result'>('main')
+  const openIndex = (from: 'main' | 'result') => {
+    setIndexFrom(from)
+    setStep('species')
+  }
 
   // Keep the address bar pointing at the current record so it can be copied or reloaded.
   useEffect(() => {
     const url = step === 'result' && record ? shareUrl(record.birth, nickname) : '/'
     if (url !== location.href) history.replaceState(null, '', url)
   }, [step, record, nickname])
+
+  // Every step is a full screen of its own, so each one starts at the top.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [step])
 
   const reveal = () => {
     setBurst(true)
@@ -47,7 +60,9 @@ export function App() {
     <main className="relative min-h-dvh">
       <TripBackground burst={burst} throb={step === 'recovering'} />
       {step === 'story' && <StoryIntro onDone={() => setStep('main')} />}
-      {step === 'main' && <Main onStart={() => setStep('form')} onReplay={() => setStep('story')} />}
+      {step === 'main' && (
+        <Main onStart={() => setStep('form')} onReplay={() => setStep('story')} onSpecies={() => openIndex('main')} />
+      )}
       {step === 'form' && (
         <BirthForm
           onSubmit={(birth, nick) => {
@@ -69,8 +84,19 @@ export function App() {
           isShared={isShared}
           onAgain={() => setStep('form')}
           onMine={() => setStep('main')}
+          onSpecies={() => openIndex('result')}
         />
       )}
+      {step === 'species' &&
+        (indexFrom === 'result' && record ? (
+          <SpeciesIndex
+            mine={{ idx: SPECIES.indexOf(record.species), label: isShared ? '이 기록' : '나의 종족' }}
+            onBack={() => setStep('result')}
+            backLabel="수감 기록으로 돌아가기"
+          />
+        ) : (
+          <SpeciesIndex onBack={() => setStep('main')} backLabel="처음으로" onStart={() => setStep('form')} />
+        ))}
     </main>
   )
 }
@@ -81,9 +107,10 @@ type ResultProps = {
   isShared: boolean
   onAgain: () => void
   onMine: () => void
+  onSpecies: () => void
 }
 
-function Result({ record, nickname, isShared, onAgain, onMine }: ResultProps) {
+function Result({ record, nickname, isShared, onAgain, onMine, onSpecies }: ResultProps) {
   const storyRef = useRef<HTMLDivElement>(null)
   const [image, setImage] = useState<File | null>(null)
   const [toast, setToast] = useState('')
@@ -136,7 +163,7 @@ function Result({ record, nickname, isShared, onAgain, onMine }: ResultProps) {
       )}
 
       <div className="mt-4 w-full max-w-[var(--col)]">
-        <Report record={record} />
+        <Report record={record} onSpecies={onSpecies} />
       </div>
       <div className="mt-6 flex w-full max-w-[var(--col)] flex-col items-center gap-3 border-t border-dashed border-paper/20 pt-6">
         {isShared ? (
