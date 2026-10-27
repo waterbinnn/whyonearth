@@ -1,4 +1,4 @@
-// Long-form result under the card: record before Earth, what your soul kept (bad habits, then good points), and species matches.
+// Long-form result under the card: record before Earth (the species, then the crime), what your soul kept (bad habits, then good points), and species matches.
 import { SPECIES, type Match } from '../data/species'
 import type { PrisonRecord } from '../lib/record'
 import { AsciiPortrait } from './AsciiPortrait'
@@ -15,8 +15,10 @@ function Section({ no, en, title, children }: { no: string; en: string; title: s
   )
 }
 
-// 은 after a final consonant, 는 after a vowel.
-const topic = (word: string) => ((word.charCodeAt(word.length - 1) - 0xac00) % 28 ? '은' : '는')
+// Korean particles that change with the last syllable: 은/는, 이었다/였다.
+const hasFinal = (word: string) => (word.charCodeAt(word.length - 1) - 0xac00) % 28 !== 0
+const topic = (word: string) => (hasFinal(word) ? '은' : '는')
+const copula = (word: string) => (hasFinal(word) ? '이었다' : '였다')
 
 const P = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <p className={`font-pixel fs-13 leading-[1.85] text-fog break-keep ${className}`}>{children}</p>
@@ -47,15 +49,11 @@ export function Report({ record, onSpecies }: { record: PrisonRecord; onSpecies?
   return (
     <div className="w-full max-w-[var(--col)] space-y-8">
       <Section no="01" en="RECORD BEFORE EARTH" title={`지구 이전 기록: ${species.ko}`}>
-        {/* What the species is, before what you did as one. Same text as the species index. */}
-        <div className="mb-4 border border-paper/20 px-3 py-3">
-          <div className="font-mono fs-9 tracking-wider text-gray">
-            SPECIES FILE · {species.en}
-          </div>
-          <div className="mt-1 font-pixel fs-13 text-paper">{species.ko}{topic(species.ko)} 어떤 종족인가</div>
-          <P className="mt-1.5">{species.lore}</P>
-        </div>
-        <P>{species.identity}</P>
+        <P>
+          지구에 오기 전 당신은 {species.ko}
+          {copula(species.ko)}. {species.ko}
+          {topic(species.ko)} {species.lore}
+        </P>
         <div className="mt-4 border-l border-paper/15 bg-coal/70 px-3 py-3">
           <div className="font-mono fs-9 tracking-wider text-gray">INCIDENT REPORT · 사건 경위서</div>
           <div className="mt-1 font-pixel fs-13 text-paper">{crime.ko}</div>
