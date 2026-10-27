@@ -28,7 +28,8 @@ export type Species = {
   ko: string
   en: string
   shape: ShapeId
-  origin: { ko: string; en: string } // zodiac sign, shown only on the card
+  origin: { ko: string; en: string } // zodiac sign, shown on the card and the species index
+  lore: string // what the internet commonly says about the species, for the species index page
   identity: string // who you were before Earth, told about you, not about the species
   symptoms: string[][] // versions of bad habits still showing on Earth; one is picked per birthday
   merits: string[] // good points on Earth, one paragraph each
@@ -47,6 +48,7 @@ export const SPECIES: Species[] = [
     en: 'REPTILIAN',
     shape: 'reptilian',
     origin: { ko: '양자리', en: 'ARIES' },
+    lore: '비늘 덮인 피부에 세로로 찢어진 눈을 가진 파충류형 인간 종족이다. 사람의 모습으로 변신해 각국의 지배층에 숨어 있다는 음모론으로 유명하다. 용자리에서 왔다는 설도 있다.',
     identity:
       '지구에 오기 전 당신은 렙틸리언이었다. 어느 전투에서든 가장 먼저 뛰어드는 전사였고, 후퇴라는 말은 끝까지 배우지 않았다.',
     symptoms: [
@@ -113,6 +115,7 @@ export const SPECIES: Species[] = [
     en: 'ANUNNAKI',
     shape: 'anunnaki',
     origin: { ko: '황소자리', en: 'TAURUS' },
+    lore: '고대 수메르 신화에 나오는 신들의 이름이다. 작가 제카리아 시친은 이들이 행성 니비루에서 온 외계인이며, 금을 캐기 위해 유전자를 조작해 인간을 만들었다고 주장했다.',
     identity:
       '지구에 오기 전 당신은 아눈나키였다. 끝이 보이지 않는 금고를 가진 부자였고, 한번 손에 들어온 것은 무엇 하나 내놓지 않았다.',
     symptoms: [
@@ -179,6 +182,7 @@ export const SPECIES: Species[] = [
     en: 'HYBRID',
     shape: 'hybrid',
     origin: { ko: '쌍둥이자리', en: 'GEMINI' },
+    lore: '외계인과 인간 사이에서 태어났다는 혼혈 종족이다. 납치 경험담에는 외계인이 사람을 데려가 혼혈 아이를 만든다는 증언이 자주 나온다. 겉모습은 사람과 거의 같아서 이미 지구에 섞여 산다는 설이 있다.',
     identity:
       '지구에 오기 전 당신은 하이브리드였다. 여러 행성을 오가며 소식을 전하는 전령이었고, 당신이 지나간 곳마다 새로운 소문이 생겼다.',
     symptoms: [
@@ -245,6 +249,7 @@ export const SPECIES: Species[] = [
     en: 'LYRAN',
     shape: 'lyran',
     origin: { ko: '게자리', en: 'CANCER' },
+    lore: '거문고자리에서 왔다는 종족으로, 사자나 고양이를 닮은 얼굴로 그려진다. 뉴에이지 채널링에서는 노르딕과 플레이아데스인을 비롯한 여러 인간형 종족의 조상으로 알려져 있다.',
     identity:
       '지구에 오기 전 당신은 라이란이었다. 갈 곳 없는 이들을 집에 들여 먹이고 재우는 큰 집의 주인이었고, 한번 식구가 된 이는 누구도 내보내지 않았다.',
     symptoms: [
@@ -311,6 +316,7 @@ export const SPECIES: Species[] = [
     en: 'NORDIC',
     shape: 'nordic',
     origin: { ko: '사자자리', en: 'LEO' },
+    lore: '금발에 키가 크고 북유럽 사람처럼 생긴 인간형 외계인이다. 1970년대 스위스의 빌리 마이어가 플레이아데스에서 온 이들과 여러 번 만났다고 주장하면서 널리 알려졌다.',
     identity:
       '지구에 오기 전 당신은 노르딕이었다. 행성 연합을 대표해 사람들 앞에 서는 지도자였고, 당신이 등장하는 곳에는 언제나 박수가 따랐다.',
     symptoms: [
@@ -377,6 +383,7 @@ export const SPECIES: Species[] = [
     en: 'GREY',
     shape: 'grey',
     origin: { ko: '처녀자리', en: 'VIRGO' },
+    lore: '회색 피부, 커다란 머리, 새까만 아몬드형 눈을 가진 작은 외계인이다. 1961년 힐 부부 납치 사건 이후 외계인의 대표적인 모습이 되었다. 로스웰에 추락한 외계인도 흔히 이 모습으로 그려진다.',
     identity:
       '지구에 오기 전 당신은 그레이였다. 우주의 모든 생명체를 조사하고 기록하는 조사관이었고, 당신의 보고서에서 오류가 나온 적은 한 번도 없었다.',
     symptoms: [
@@ -443,6 +450,7 @@ export const SPECIES: Species[] = [
     en: 'VENUSIAN',
     shape: 'halo',
     origin: { ko: '천칭자리', en: 'LIBRA' },
+    lore: '금성에서 왔다는 인간형 외계인이다. 1952년 조지 아담스키가 캘리포니아 사막에서 금성인 오손을 만났다고 주장하면서 알려졌다. 핵무기의 위험을 경고하러 왔다고 전해진다.',
     identity:
       '지구에 오기 전 당신은 금성인이었다. 다투는 행성들 사이를 오가는 중재자였고, 당신이 앉은 자리에서는 누구도 언성을 높이지 않았다.',
     symptoms: [
@@ -509,6 +517,7 @@ export const SPECIES: Species[] = [
     en: 'MANTIS',
     shape: 'mantis',
     origin: { ko: '전갈자리', en: 'SCORPIO' },
+    lore: '사마귀를 닮은 곤충형 외계인이다. 납치 경험담에서 그레이와 함께 나타나 이들을 지휘하는 존재로 묘사된다. 말 대신 텔레파시로 대화한다고 한다.',
     identity:
       '지구에 오기 전 당신은 맨티스였다. 은하 정보국의 수사관이었고, 당신 앞에서 끝까지 숨길 수 있는 비밀은 없었다.',
     symptoms: [
@@ -575,6 +584,7 @@ export const SPECIES: Species[] = [
     en: 'ARCTURIAN',
     shape: 'vortex',
     origin: { ko: '사수자리', en: 'SAGITTARIUS' },
+    lore: '목동자리의 밝은 별 아크투루스에서 왔다는 종족이다. 예언가 에드거 케이시가 우주에서 가장 진보한 문명 중 하나로 언급한 뒤로, 뉴에이지 채널링에 자주 등장한다.',
     identity:
       '지구에 오기 전 당신은 아크투리안이었다. 지도에 없는 은하를 찾아다니는 탐험가였고, 한곳에 백 년 넘게 머문 적이 없었다.',
     symptoms: [
@@ -641,6 +651,7 @@ export const SPECIES: Species[] = [
     en: 'TALL WHITE',
     shape: 'tallWhite',
     origin: { ko: '염소자리', en: 'CAPRICORN' },
+    lore: '키가 2미터를 넘고 피부가 창백한 인간형 외계인이다. 찰스 홀이 1960년대 네바다의 미 공군 기지에서 근무하며 이들을 목격했다고 주장하면서 알려졌다. 미군과 협력한다는 설이 있다.',
     identity:
       '지구에 오기 전 당신은 톨 화이트였다. 은하 관리국의 가장 높은 자리까지 올라간 관리자였고, 당신이 맡은 사업은 한 번도 기한을 넘기지 않았다.',
     symptoms: [
@@ -707,6 +718,7 @@ export const SPECIES: Species[] = [
     en: 'LITTLE GREEN MAN',
     shape: 'littleGreen',
     origin: { ko: '물병자리', en: 'AQUARIUS' },
+    lore: '작은 키에 초록색 피부를 가진, 대중문화 속 외계인의 원형이다. 1950년대 SF 영화와 만화를 거치며 굳어진 모습이다. 1967년 처음 발견된 펄서 신호는 한때 LGM-1, 즉 리틀 그린맨이라는 별명으로 불렸다.',
     identity:
       '지구에 오기 전 당신은 리틀 그린맨이었다. 아무도 생각하지 못한 물건을 만드는 발명가였고, 당신의 아이디어는 늘 시대보다 몇천 년 빨랐다.',
     symptoms: [
@@ -773,6 +785,7 @@ export const SPECIES: Species[] = [
     en: 'SIRIAN',
     shape: 'jelly',
     origin: { ko: '물고기자리', en: 'PISCES' },
+    lore: '밤하늘에서 가장 밝은 별 시리우스에서 왔다는 종족이다. 아프리카 도곤족이 맨눈으로 볼 수 없는 시리우스 B를 알고 있었다는 주장과 함께, 물고기를 닮은 존재 놈모가 그들에게 문명을 전했다는 이야기가 퍼졌다.',
     identity:
       '지구에 오기 전 당신은 시리안이었다. 바다 행성에서 노래를 짓는 예술가였고, 당신의 노래를 들은 이들은 모두 울었다.',
     symptoms: [

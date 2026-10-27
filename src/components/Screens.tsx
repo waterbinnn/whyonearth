@@ -19,7 +19,7 @@ const Btn = (p: React.ButtonHTMLAttributes<HTMLButtonElement> & { tone?: 'main' 
 }
 export { Btn }
 
-export function Main({ onStart, onReplay }: { onStart: () => void; onReplay: () => void }) {
+export function Main({ onStart, onReplay, onSpecies }: { onStart: () => void; onReplay: () => void; onSpecies: () => void }) {
   // A random inmate floats behind the title as a teaser.
   const teaser = useMemo(() => {
     const s = SPECIES[Math.floor(Math.random() * SPECIES.length)]
@@ -59,6 +59,9 @@ export function Main({ onStart, onReplay }: { onStart: () => void; onReplay: () 
           <Ufo />
           로스웰에서 무슨 일이 있었나
         </button>
+        <Btn tone="ghost" onClick={onSpecies}>
+          외계인 종족 도감
+        </Btn>
         <div className="text-center font-mono fs-9 text-gray">
           FOR ENTERTAINMENT ONLY · 입력값은 서버에 저장되지 않습니다
         </div>

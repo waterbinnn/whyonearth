@@ -37,7 +37,7 @@ function Mate({ label, match, tone }: { label: string; match: Match; tone: 'good
   )
 }
 
-export function Report({ record }: { record: PrisonRecord }) {
+export function Report({ record, onSpecies }: { record: PrisonRecord; onSpecies?: () => void }) {
   const { species, crime } = record
   // One list: the bad habits first, then the good points.
   const traits = [...record.symptoms, ...species.merits]
@@ -66,6 +66,14 @@ export function Report({ record }: { record: PrisonRecord }) {
           <Mate label="가장 잘 맞는 종족" match={species.best} tone="good" />
           <Mate label="가장 안 맞는 종족" match={species.worst} tone="bad" />
         </div>
+        {onSpecies && (
+          <button
+            className="mt-3 w-full border border-dashed border-paper/30 py-2.5 font-pixel fs-12 text-fog hover:border-paper hover:text-paper"
+            onClick={onSpecies}
+          >
+            외계인 12종족 전체 보기 &gt;
+          </button>
+        )}
       </Section>
 
     </div>
