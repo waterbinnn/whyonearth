@@ -1,6 +1,6 @@
 // Species index: all twelve species, one entry per zodiac sign.
 // mine marks the species of the record the visitor came from.
-import { SPECIES } from '../data/species'
+import { SPECIES_L as SPECIES, t } from '../lib/locale'
 import { SIGN_DATES } from '../lib/zodiac'
 import { AsciiPortrait } from './AsciiPortrait'
 import { Btn } from './Screens'
@@ -21,9 +21,9 @@ export function SpeciesIndex({ mine, onBack, backLabel, onStart }: Props) {
 
       <header>
         <div className="font-mono fs-9 tracking-[0.18em] text-gray">/ SPECIES INDEX — 12 KNOWN</div>
-        <h2 className="glow mt-1.5 font-big fs-24 leading-snug">외계인 종족 도감</h2>
+        <h2 className="glow mt-1.5 font-big fs-24 leading-snug">{t.speciesIndex}</h2>
         <p className="mt-2 font-pixel fs-12 leading-[1.7] text-fog break-keep">
-          지구에 갇힌 자들은 모두 이 열두 종족 중 하나에서 왔다. 어느 종족이었는지는 이번 생의 생일 별자리가 알려 준다.
+          {t.indexIntro}
         </p>
       </header>
 
@@ -38,12 +38,12 @@ export function SpeciesIndex({ mine, onBack, backLabel, onStart }: Props) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2 font-mono fs-9 tracking-wider text-gray">
                   <span>
-                    {String(i + 1).padStart(2, '0')} · {s.origin.ko} {SIGN_DATES[i]} 무렵
+                    {String(i + 1).padStart(2, '0')} · {t.signLine(s, i, SIGN_DATES[i])}
                   </span>
                   {isMine && <span className="shrink-0 bg-plate px-1.5 text-paper">{mine.label}</span>}
                 </div>
-                <div className="mt-1 font-big fs-19 leading-tight">{s.ko}</div>
-                <div className="font-mono fs-9 tracking-[0.14em] text-gray">{s.en}</div>
+                <div className="mt-1 font-big fs-19 leading-tight">{s.name}</div>
+                <div className="font-mono fs-9 tracking-[0.14em] text-gray">{s.home ?? s.en}</div>
                 <p className="mt-1.5 font-pixel fs-12 leading-[1.7] text-fog break-keep">{s.lore}</p>
               </div>
             </li>
@@ -52,7 +52,7 @@ export function SpeciesIndex({ mine, onBack, backLabel, onStart }: Props) {
       </ol>
 
       <div className="flex flex-col gap-2 border-t border-dashed border-paper/20 pt-6">
-        {onStart && <Btn onClick={onStart}>내 종족 찾기</Btn>}
+        {onStart && <Btn onClick={onStart}>{t.findMine}</Btn>}
         <Btn tone={onStart ? 'ghost' : 'main'} onClick={onBack}>
           {backLabel}
         </Btn>

@@ -3,35 +3,33 @@
 // Lines auto-advance; tap for the next cut, SKIP to jump to the main page.
 import { useEffect, useRef, useState } from 'react'
 import type { ShapeId } from '../data/species'
+import { t } from '../lib/locale'
 import type { SceneId } from '../lib/shapes'
 import { AsciiPortrait } from './AsciiPortrait'
 
 const BEAT = 2.6 // seconds per line
 
 type Scene = { caption: string; figure: ShapeId | SceneId; seed: number; lines: string[] }
+// Lines come from the strings table (t.intro), one list per scene.
 
 const SCENES: Scene[] = [
   {
     caption: 'ROSWELL, NEW MEXICO · JULY 1947',
     figure: 'crash',
     seed: 1947,
-    lines: ['1947년 7월, 뉴멕시코 사막에 무언가가 추락했다.', '잔해 속 생존자는 사람이 아니었다.'],
+    lines: t.intro[0],
   },
   {
     caption: 'ROSWELL ARMY AIR FIELD · ISOLATION ROOM',
     figure: 'grey',
     seed: 8,
-    lines: ['생존자는 군 기지로 옮겨졌다.', '그리고 한 간호사에게 지구의 비밀을 알려 주었다.'],
+    lines: t.intro[1],
   },
   {
     caption: 'EARTH · PRESENT DAY',
     figure: 'earth',
     seed: 3,
-    lines: [
-      '지구는 우주의 감옥이다.',
-      '우주에서 죄를 지은 외계인의 영혼이 기억을 지운 채 이곳에 갇힌다.',
-      '당신도 그중 하나다.',
-    ],
+    lines: t.intro[2],
   },
 ]
 
@@ -97,7 +95,7 @@ export function StoryIntro({ onDone }: { onDone: () => void }) {
             <span className="text-plate">●</span> <Timecode />
           </span>
           <button className="-my-1 py-1 pl-4 text-paper/80" onClick={stop(onDone)}>
-            닫기 ✕
+            {t.close}
           </button>
         </div>
       </div>
@@ -123,10 +121,10 @@ export function StoryIntro({ onDone }: { onDone: () => void }) {
       {/* letterbox bottom */}
       <div className="flex h-14 shrink-0 items-center justify-between bg-black gutter">
         <span className="font-mono fs-8 leading-relaxed text-gray/80 break-keep">
-          1947년 로스웰 외계인 추락 사건을 바탕으로 각색
+          {t.introCredit}
         </span>
         <button className="shrink-0 py-2 pl-4 font-pixel fs-12 text-paper" onClick={stop(next)}>
-          {lastScene && lastBeat ? '돌아가기 →' : '다음 →'}
+          {lastScene && lastBeat ? t.done : t.next}
         </button>
       </div>
     </section>

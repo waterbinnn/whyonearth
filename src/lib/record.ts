@@ -1,4 +1,6 @@
 import { MOST_WANTED, SPECIES, type Crime, type Species } from '../data/species'
+import { MOST_WANTED_EN, SPECIES_EN } from '../data/species.en'
+import { verdict, type Lang } from './copy'
 import { zodiacIndex } from './zodiac'
 import { hash, pick, rng } from './seed'
 
@@ -36,9 +38,28 @@ export function makeRecord(birth: string): PrisonRecord {
     species,
     wanted,
     crime,
-    verdict: `${crime.act} 죄로 기억이 지워진 채 지구에 갇힘.`,
+    verdict: verdict('ko', crime.act),
     reincarnations,
     // Drawn last so adding it did not change anyone's crime or inmate number.
     symptoms: pick(r, species.symptoms),
   }
 }
+
+// The same record in another language. The draws above are never repeated: the English
+// data has the same order and counts, so each pick maps across by its index.
+export function localizeRecord(rec: PrisonRecord, lang: Lang): PrisonRecord {
+  if (lang === 'ko') return rec
+  const species = SPECIES_EN[SPECIES.indexOf(rec.species)]
+  const crime = rec.wanted
+    ? MOST_WANTED_EN[MOST_WANTED.indexOf(rec.crime)]
+    : species.crimes[rec.species.crimes.indexOf(rec.crime)]
+  return {
+    ...rec,
+    species,
+    crime,
+    verdict: verdict(lang, crime.act),
+    symptoms: species.symptoms[rec.species.symptoms.indexOf(rec.symptoms)],
+  }
+}
+
+export const recordFor = (birth: string, lang: Lang) => localizeRecord(makeRecord(birth), lang)

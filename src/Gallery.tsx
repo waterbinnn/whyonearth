@@ -4,17 +4,19 @@
 //   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
 //     --window-size=1200,630 --virtual-time-budget=6000 --user-data-dir=/tmp/og-chrome \
 //     --screenshot=public/og.png "http://localhost:5179/?og"
+// and the English one (public/og-en.png) the same way from "http://localhost:5179/en/?og".
+// Every page here is in English under /en/ (e.g. /en/?story=1995-03-14).
 // ?card= / ?report= / ?story=YYYY-MM-DD: the card, card + report, or story frame for that birthday.
 import { AsciiPortrait } from './components/AsciiPortrait'
 import { PrisonCard } from './components/PrisonCard'
 import { Report } from './components/Report'
 import { StoryFrame } from './components/StoryFrame'
 import { SPECIES, type ShapeId } from './data/species'
-import { makeRecord } from './lib/record'
+import { LANG, makeRecordL as makeRecord } from './lib/locale'
 
 export function Gallery() {
   const q = new URLSearchParams(location.search)
-  if (q.has('og')) return <OgImage />
+  if (q.has('og')) return <OgImage {...OG_TEXT[LANG]} />
   if (q.has('icon')) return <AppIcon />
   const portrait = q.get('portrait')
   if (portrait)
@@ -46,7 +48,7 @@ export function Gallery() {
           <figure key={s.shape + seed} className="bg-ink border border-paper/20">
             <AsciiPortrait shape={s.shape} seed={seed} />
             <figcaption className="font-mono text-xs p-1">
-              {s.ko} / {s.shape}
+              {s.name} / {s.shape}
             </figcaption>
           </figure>
         )),
@@ -59,18 +61,30 @@ export function Gallery() {
 // in dark ink inside a dashed annotation box. The copy names the premise (a prison planet), the
 // Roswell hook and what this is (a zodiac reading).
 // Chat apps show it at 300-450px wide, so there is no grain or glow and nothing under 28px.
-function OgImage() {
+const OG_TEXT = {
+  ko: {
+    left: ['지구는', '우주의', '감옥이다'],
+    tag: '별자리 외계 사주',
+    right: ['로스웰에', '추락한', '외계인이 밝힌', '당신의 죄'],
+  },
+  en: {
+    left: ['EARTH', 'IS A', 'PRISON'],
+    tag: 'ZODIAC ALIEN RAP SHEET',
+    right: ['The alien who', 'crashed at', 'Roswell knows', 'what you did'],
+  },
+}
+
+// Lines joined with <br />.
+const Lines = ({ lines }: { lines: string[] }) => lines.flatMap((l, i) => (i ? [<br key={i} />, l] : [l]))
+
+function OgImage({ left, tag, right }: (typeof OG_TEXT)['ko']) {
   const handle = 'absolute h-[12px] w-[12px] border-2 border-ink bg-paper'
   return (
     <div className="relative flex overflow-hidden bg-paper text-ink" style={{ width: 1200, height: 630 }}>
       <div className="flex w-[320px] flex-col justify-between py-10 pl-8">
         <span className="self-start bg-plate px-3 py-1 font-mono text-[28px] leading-[1.4] tracking-[0.12em] text-paper">WHY ON EARTH</span>
         <h1 className="font-big text-[66px] leading-[1.2] whitespace-nowrap" style={{ textShadow: '1px 0 0 currentColor' }}>
-          지구는
-          <br />
-          우주의
-          <br />
-          감옥이다
+          <Lines lines={left} />
         </h1>
       </div>
       <div className="dotgrid-ink relative flex flex-1 items-end justify-center">
@@ -87,16 +101,10 @@ function OgImage() {
         </div>
       </div>
       <div className="flex w-[400px] flex-col items-end justify-between py-10 pr-8">
-        <span className="bg-ink px-3 py-1 font-mono text-[28px] leading-[1.4] text-paper">별자리 외계 사주</span>
+        <span className="bg-ink px-3 py-1 font-mono text-[28px] leading-[1.4] text-paper">{tag}</span>
         {/* Galmuri has no bold cut: a 1px same-color shadow thickens the strokes. */}
         <p className="self-start font-big text-[48px] leading-[1.25] whitespace-nowrap text-plate" style={{ textShadow: '1px 0 0 currentColor' }}>
-          로스웰에
-          <br />
-          추락한
-          <br />
-          외계인이 밝힌
-          <br />
-          당신의 죄
+          <Lines lines={right} />
         </p>
       </div>
     </div>
